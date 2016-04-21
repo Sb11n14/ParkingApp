@@ -46,7 +46,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
     // Common column names
     private static final String KEY_ID = "_id";
 
-    // PARKING Table - column namess
+    // PARKING Table - column names
     //public static final String PARKING_ID = "_id";
     public static final String TIME_IN = "timein";
     public static final String TIME_OUT = "timeout";
