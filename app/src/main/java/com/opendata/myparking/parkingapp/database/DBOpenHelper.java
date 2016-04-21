@@ -1,17 +1,5 @@
 package com.opendata.myparking.parkingapp.database;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.content.ContentValues;
-
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -22,6 +10,8 @@ import android.util.Log;
 import com.opendata.myparking.parkingapp.model.Location;
 import com.opendata.myparking.parkingapp.model.Parking;
 import com.opendata.myparking.parkingapp.model.Vehicle;
+
+import java.util.ArrayList;
 
 
 /**
@@ -36,7 +26,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
     private static final int DATABASE_VERSION = 3;
 
 
-    //Constants for identifying table and column
+    //Constants for identifying table & column
 
     //Table names
     public static final String TABLE_PARKING = "parking";
