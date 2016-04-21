@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Parking App</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+
+    <string name="nav_item_home">Home</string>
+    <string name="nav_item_parkings">Parkings</string>
+    <string name="nav_item_vehicles">Vehicles</string>
+    <string name="nav_item_locations">Locations</string>
+
+    <!-- navigation drawer item labels  -->
+    <string-array name="nav_drawer_labels">
+        <item>@string/nav_item_home</item>
+        <item>@string/nav_item_parkings</item>
+        <item>@string/nav_item_vehicles</item>
+        <item>@string/nav_item_locations</item>
+    </string-array>
+
+    <string name="title_locations">Locations</string>
+    <string name="title_vehicles">Vehicles</string>
+    <string name="title_parkings">Parkings</string>
+    <string name="title_home">Home</string>
+
+    <string name="hint_location">Location Name</string>
+    <string name="hint_cost">Cost per hour</string>
+
+    <string name="btn_submit">Submit</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
