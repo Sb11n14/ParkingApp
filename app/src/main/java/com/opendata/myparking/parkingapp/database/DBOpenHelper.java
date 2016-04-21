@@ -36,7 +36,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
     private static final int DATABASE_VERSION = 3;
 
 
-    //Constants for identifying table and columns
+    //Constants for identifying table and column
 
     //Table names
     public static final String TABLE_PARKING = "parking";
