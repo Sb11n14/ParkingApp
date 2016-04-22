@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.clans.fab.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.opendata.myparking.parkingapp.R;
@@ -63,6 +64,7 @@ public class HomeFragment extends Fragment {
     private static File destination;
     private TextView resultTextView;
     private ImageView imageView;
+    private FloatingActionButton fabButton;
     private String plate_number;
     private DBOpenHelper db;
 
@@ -84,16 +86,18 @@ public class HomeFragment extends Fragment {
 
         ANDROID_DATA_DIR = getActivity().getApplicationInfo().dataDir;
 
-        rootView.findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+
+        resultTextView = (TextView) rootView.findViewById(R.id.textView);
+        imageView = (ImageView) rootView.findViewById(R.id.imageView);
+
+        rootView.findViewById(R.id.fabButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 checkPermission();
             }
         });
-        resultTextView = (TextView) rootView.findViewById(R.id.textView);
-        imageView = (ImageView) rootView.findViewById(R.id.imageView);
 
-        resultTextView.setText("Press the button below to start a request.");
+        resultTextView.setText("Welcome! Press the red button below to scan your plae number.");
 
         // Inflate the layout for this fragment
 

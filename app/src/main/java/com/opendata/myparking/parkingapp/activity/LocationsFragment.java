@@ -1,5 +1,6 @@
 package com.opendata.myparking.parkingapp.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -16,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.github.clans.fab.FloatingActionButton;
 import com.opendata.myparking.parkingapp.R;
 import com.opendata.myparking.parkingapp.adapter.LocationsAdapter;
 import com.opendata.myparking.parkingapp.adapter.VehiclesAdapter;
@@ -43,6 +45,7 @@ public class LocationsFragment extends Fragment {
     private EditText inputLocation;
     private EditText inputCost;
     private Button btnSubmit;
+    private FloatingActionButton fabButton;
 
 
 
@@ -60,18 +63,21 @@ public class LocationsFragment extends Fragment {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_locations, container, false);
 
-        inputLayoutLocation = (TextInputLayout) rootView.findViewById(R.id.input_layout_location);
+        /*inputLayoutLocation = (TextInputLayout) rootView.findViewById(R.id.input_layout_location);
         inputLayoutCost = (TextInputLayout) rootView.findViewById(R.id.input_layout_cost);
         inputLocation = (EditText) rootView.findViewById(R.id.input_location);
-        inputCost = (EditText) rootView.findViewById(R.id.input_cost);
-        btnSubmit = (Button) rootView.findViewById(R.id.btn_submit);
+        inputCost = (EditText) rootView.findViewById(R.id.input_cost);*/
+       fabButton = (FloatingActionButton) rootView.findViewById(R.id.fabButton);
 
-        btnSubmit.setOnClickListener(new View.OnClickListener(){
+        fabButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                String location = inputLocation.getText().toString().trim();
+                /*String location = inputLocation.getText().toString().trim();
                 int cost = Integer.parseInt(inputCost.getText().toString().trim());
-                inputLocation(location, cost);
+                inputLocation(location, cost);*/
+
+                Intent intent = new Intent(LocationsFragment.this.getActivity(), CreateLocationActivity.class);
+                startActivity(intent);
             }
         });
 

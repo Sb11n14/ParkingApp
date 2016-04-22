@@ -24,7 +24,7 @@
     <string name="title_home">Home</string>
 
     <string name="hint_location">Location Name</string>
-    <string name="hint_cost">Cost per hour</string>
+    <string name="hint_cost">Cost per minute</string>
 
     <string name="btn_submit">Submit</string>
 
