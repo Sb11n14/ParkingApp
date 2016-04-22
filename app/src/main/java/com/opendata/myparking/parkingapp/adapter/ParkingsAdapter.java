@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.opendata.myparking.parkingapp.R;
 import com.opendata.myparking.parkingapp.activity.MainActivity;
-import com.opendata.myparking.parkingapp.activity.VehicleDetailsActivity;
 import com.opendata.myparking.parkingapp.database.DBOpenHelper;
 import com.opendata.myparking.parkingapp.model.Location;
 import com.opendata.myparking.parkingapp.model.Parking;

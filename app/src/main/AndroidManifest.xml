@@ -23,7 +23,11 @@
         <activity
             android:name=".activity.CreateLocationActivity"
             android:label="Create Location Activity" >
-        </activity>
+        </activity><activity
+        android:name=".activity.EditUserActivity"
+        android:label="Edit User Activity" >
+    </activity>
+
     </application>
 
 </manifest>

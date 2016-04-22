@@ -2,9 +2,12 @@ package com.opendata.myparking.parkingapp.activity;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.opendata.myparking.parkingapp.R;
@@ -24,6 +27,8 @@ public class ParkingsFragment extends Fragment {
     private ParkingsAdapter adapterparking;
 
     private DBOpenHelper db;
+    private int intIndexSelected;
+
     public ParkingsFragment(){}
 
     @Override
@@ -42,6 +47,38 @@ public class ParkingsFragment extends Fragment {
 
         db.closeDB();
 
+        registerForContextMenu(listPlateNumbers);
+
         return rootView;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
+    {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        //menu.setHeaderTitle("Select The Action");
+        menu.add(0, v.getId(), 0, "Delete");
+        menu.add(0, v.getId(), 0, "Update");
+
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        //  info.position will give the index of selected item
+        intIndexSelected = info.position;
+        if (item.getTitle() == "Delete") {
+
+            // Code to execute when clicked on This Item
+        } else if (item.getTitle() == "Update") {
+
+            // Code to execute when clicked on This Item                                                        }
+
+
+        }
+        return true;
     }
 }

@@ -276,6 +276,10 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 fragment = new LocationsFragment();
                 title = getString(R.string.title_locations);
                 break;
+            case 4:
+                fragment = new UserFragment();
+                title = getString(R.string.title_user_name);
+                break;
             default:
                 break;
         }

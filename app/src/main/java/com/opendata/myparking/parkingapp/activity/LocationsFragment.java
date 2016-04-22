@@ -4,14 +4,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -46,7 +49,7 @@ public class LocationsFragment extends Fragment {
     private EditText inputCost;
     private Button btnSubmit;
     private FloatingActionButton fabButton;
-
+    private int intIndexSelected;
 
 
     public LocationsFragment(){}
@@ -63,11 +66,7 @@ public class LocationsFragment extends Fragment {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_locations, container, false);
 
-        /*inputLayoutLocation = (TextInputLayout) rootView.findViewById(R.id.input_layout_location);
-        inputLayoutCost = (TextInputLayout) rootView.findViewById(R.id.input_layout_cost);
-        inputLocation = (EditText) rootView.findViewById(R.id.input_location);
-        inputCost = (EditText) rootView.findViewById(R.id.input_cost);*/
-       fabButton = (FloatingActionButton) rootView.findViewById(R.id.fabButton);
+        fabButton = (FloatingActionButton) rootView.findViewById(R.id.fabButton);
 
         fabButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -92,9 +91,40 @@ public class LocationsFragment extends Fragment {
         //Dont forget to close database
         db.closeDB();
 
+        //Register the ListView for Context menu
+        registerForContextMenu(listLocations);
         return rootView;
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
+    {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        //menu.setHeaderTitle("Select The Action");
+        menu.add(0, v.getId(), 0, "Delete");
+        menu.add(0, v.getId(), 0, "Update");
+
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        //  info.position will give the index of selected item
+        intIndexSelected = info.position;
+        if (item.getTitle() == "Delete") {
+
+            // Code to execute when clicked on This Item
+        } else if (item.getTitle() == "Update") {
+
+            // Code to execute when clicked on This Item                                                        }  
+
+
+        }
+        return true;
+    }
     /**
      * Input locatiopn of parking to Database
      * @param location_name is a location name
