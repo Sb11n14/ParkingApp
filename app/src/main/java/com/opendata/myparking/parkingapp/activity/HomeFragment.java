@@ -77,7 +77,62 @@ public class HomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         db = new DBOpenHelper(getActivity().getApplicationContext());
-        db.getWritableDatabase();
+        /*Log.d("*****Testing: ", "Parking******");
+        //Parking testing.
+        Parking park1 = new Parking(1,1,1,5.0);
+        Parking park2 = new Parking(2,1,1,15.0);
+        Parking park3 = new Parking(3,1,1,115.0);
+        Parking park4 = new Parking(4,1,1,1115.0);
+        Parking park5 = new Parking(5,1,1,1115.0);
+
+        long parkingId1 = db.createParking(park1);
+        long parkingId2 = db.createParking(park2);
+        long parkingId3 = db.createParking(park3);
+        long parkingId4 = db.createParking(park4);
+        long parkingId5 = db.createParking(park5);
+
+        ArrayList<Parking> allParking = db.getAllParkings();
+        for (Parking p: allParking) {
+            Log.d("Results: ","Id= " + p.getParking_id() + " Veh Id= " + p.getKey_vehicle_id() + " LocId= " + p.getKey_location_id() + " TimeIn= " + p.getTime_in() + " charge= " + p.getCharge());
+
+        }
+
+        Parking oneParking = db.getParkingById(parkingId1);
+        Log.d("oneParking: ","Id= " + oneParking.getParking_id() + " Veh Id= " + oneParking.getKey_vehicle_id() + " LocId= " + oneParking.getKey_location_id() + " TimeIn= " + oneParking.getTime_in() + " charge= " + oneParking.getCharge());
+
+
+        String pCount = String.valueOf(db.countParking());
+        Log.d("Parking count = ", pCount);
+
+
+        Log.d("*****Testing: ", "Vehicle******");
+        //Vehicle Testing
+        Vehicle vehicle1 = new Vehicle("ABC1234","Brand 1","Model 1","1997","Blue");
+        Vehicle vehicle2 = new Vehicle("EFG1234","Brand 1","Model 1","1997","Blue");
+        Vehicle vehicle3 = new Vehicle("HIJK1234","Brand 1","Model 1","1997","Blue");
+        Vehicle vehicle4 = new Vehicle("LMNO1234","Brand 1","Model 1","1997","Blue");
+        Vehicle vehicle5 = new Vehicle("PQR1234","Brand 1","Model 1","1997","Blue");
+
+        long vehicleId1 = db.createVehicle(vehicle1);
+        long vehicleId2 = db.createVehicle(vehicle2);
+        long vehicleId3 = db.createVehicle(vehicle3);
+        long vehicleId4 = db.createVehicle(vehicle4);
+        long vehicleId5 = db.createVehicle(vehicle5);
+
+        ArrayList<Vehicle> allVehicle = db.getAllVehicles();
+        for (Vehicle v: allVehicle) {
+            Log.d("Results: ","Id= " + v.getId() + " Numberplate= " + v.getPlateNumber() + " Brand= " + v.getBrand() + " Model= " + v.getModel() + " yr= " + v.getYearManufactured());
+        }
+
+        Vehicle vById = db.getVehicleById(vehicleId1);
+        Log.d("Results vById: ","Id= " + vById.getId() + " Numberplate= " + vById.getPlateNumber() + " Brand= " + vById.getBrand() + " Model= " + vById.getModel() + " yr= " + vById.getYearManufactured());
+
+        Vehicle vByPlate = db.getVehicleByPlateNumber(vehicle1.getPlateNumber());
+        Log.d("Results vByPlate: ","Id= " + vByPlate.getId() + " Numberplate= " + vByPlate.getPlateNumber() + " Brand= " + vByPlate.getBrand() + " Model= " + vByPlate.getModel() + " yr= " + vByPlate.getYearManufactured());
+
+        String vCount = String.valueOf(db.countVehicle());
+        Log.d("Vehicle count = ", vCount);
+        */
 
     }
 
@@ -192,12 +247,12 @@ public class HomeFragment extends Fragment {
 
                                     //Check the plate number in database, if it is not available, access open data
                                     db = new DBOpenHelper(getActivity().getApplicationContext());
-                                    if (db.isParkingExist(plate_number)) {
+                                    if (db.isVehicleParked(1)) { //fix this!!!!!!
                                         //Parking park = db.getParking(plate_number); //Here we can pick the id of location
                                         //updateParking(plate_number);
                                     } else {
                                         if (db.isVehicleExist(plate_number)) {
-                                            Vehicle vce = db.getVehicle(plate_number);
+                                            Vehicle vce = db.getVehicleByPlateNumber(plate_number);
                                             Location loc = getParkingLocation(1); //test set key id of parking location to 1
                                             insertParking(plate_number, 1); //For test only set location id 1
                                         } else {
@@ -248,7 +303,7 @@ public class HomeFragment extends Fragment {
     private Location getParkingLocation(int location_id) {
 
         db = new DBOpenHelper(getActivity().getApplicationContext());
-        Location loc = db.getLocation(location_id);
+        Location loc = db.getLocationById(location_id);
 
         db.closeDB();
         return loc;
@@ -272,13 +327,13 @@ public class HomeFragment extends Fragment {
         String time_in = dateToString(new Date(), "dd/MM/yyyy hh:mm:ss");
 
         Parking park = new Parking();
-        park.setKey_vehicle_id(plate_number);
+        //park.setKey_vehicle_id(plate_number);
         park.setKey_location_id(location_id);
         park.setTime_in(time_in);
         park.setActive(1);
 
         long parking_id = db.createParking(park);
-        Log.d("Vehicle id", db.getParkingById(parking_id).getKey_vehicle_id());
+        //Log.d("Vehicle id", db.getParkingById(parking_id).getKey_vehicle_id());
     }
 
     private void updateParking(String plate_number) {
@@ -311,7 +366,7 @@ public class HomeFragment extends Fragment {
         boolean isAvailable;
         db = new DBOpenHelper(getActivity().getApplicationContext());
 
-        if (db.getVehicle(plate_number)==null){
+        if (db.getVehicleByPlateNumber(plate_number)==null){
             isAvailable = false;
         } else {
             isAvailable = true;
@@ -320,7 +375,7 @@ public class HomeFragment extends Fragment {
         db.closeDB();
         return isAvailable;
     }
-
+/*
     private Vehicle getVehicle(String plate_number){
         db = new DBOpenHelper(getActivity().getApplicationContext());
         Vehicle vce = db.getVehicle(plate_number);
@@ -328,7 +383,7 @@ public class HomeFragment extends Fragment {
         db.closeDB();
 
         return vce;
-    }
+    }*/
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {

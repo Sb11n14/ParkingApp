@@ -12,6 +12,13 @@ public class User {
     public User(){
 
     }
+    public User(String first_name, String last_name, Double balance, String plate_number){
+        this.first_name = first_name;
+        this.last_name = last_name;
+        this.balance = balance;
+        this.plate_number = plate_number;
+
+    }
     public Double getBalance() {
         return balance;
     }
@@ -43,6 +50,5 @@ public class User {
     public void setPlate_number(String plate_number) {
         this.plate_number = plate_number;
     }
-
 
 }

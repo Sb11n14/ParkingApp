@@ -11,21 +11,21 @@ public class Location {
     public Location(){
 
     }
+    public Location(String location_name, int cost){
+        this.location_name = location_name;
+        this.cost = cost;
+    }
 
     public void setLocation_id(long location_id){
         this.location_id = location_id;
     }
 
-    public void setLocation_name(String location_name){
-        this.location_name = location_name;
-    }
-
-    public void setCost (int cost){
-        this.cost = cost;
-    }
-
     public long getLocation_id(){
         return location_id;
+    }
+
+    public void setLocation_name(String location_name){
+        this.location_name = location_name;
     }
 
     public String getLocation_name(){
@@ -34,5 +34,8 @@ public class Location {
 
     public int getCost(){
         return cost;
+    }
+    public void setCost (int cost){
+        this.cost = cost;
     }
 }

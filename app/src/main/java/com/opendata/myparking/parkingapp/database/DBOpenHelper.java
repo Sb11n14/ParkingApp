@@ -38,6 +38,10 @@ public class DBOpenHelper extends SQLiteOpenHelper{
     // Common column names
     private static final String KEY_ID = "_id";
 
+    //Active status for parking table.
+    private static final int ACTIVE_STATUS = 1;
+    private static final int INACTIVE_STATUS = 0;
+
     // PARKING Table - column names
     //public static final String PARKING_ID = "_id";
     public static final String TIME_IN = "timein"; //datetime values.
@@ -108,7 +112,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
                     PLATE_NUMBER + " TEXT, " +
                     BRAND + " TEXT, " +
                     MODEL + " TEXT, " +
-                    YEAR_MANUFACTURED + " TEXT, " +
+                    YEAR_MANUFACTURED + " DATE, " +
                     COLOR + " TEXT" +
                     ");";
 
@@ -161,31 +165,31 @@ public class DBOpenHelper extends SQLiteOpenHelper{
 
 // ------------------------ "Parking" table methods ----------------//
     public int countParking(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        String count = "SELECT COUNT(*) FROM " + TABLE_PARKING ;
+        String count = "SELECT * FROM " + TABLE_PARKING ;
+        SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(count, null);
-        c.moveToFirst();
-        int icount = c.getInt(0);
+
+        int pCount = c.getCount();
         c.close();
-        return icount;
+        return pCount;
     }
 
-    public boolean isParkingExist (String plate_number){
+    public boolean isVehicleParked (long vehicleId){
+
+        String count = "SELECT * FROM " + TABLE_PARKING +
+                        " WHERE " + KEY_VEHICLE_ID + " = " + vehicleId +
+                        " AND " + ACTIVE + " = " + ACTIVE_STATUS;
         SQLiteDatabase db = this.getReadableDatabase();
-        if (countParking() > 0) {
-            String selectQuery = "SELECT * FROM " + TABLE_PARKING +
-                    " WHERE " + KEY_VEHICLE_ID + " = " + plate_number;
-            Cursor c = db.rawQuery(selectQuery, null);
-            if (c.getCount() <= 0) {
-                c.close();
-                return false;
-            } else {
-                c.close();
-                return true;
-            }
-        } else {
+        Cursor c = db.rawQuery(count, null);
+
+        int pCount = c.getCount();
+        c.close();
+
+        if (pCount > 0)
+            return  true;
+        else
             return false;
-        }
+
     }
 
 
@@ -195,9 +199,11 @@ public class DBOpenHelper extends SQLiteOpenHelper{
         ContentValues values = new ContentValues();
         values.put(KEY_VEHICLE_ID, parking.getKey_vehicle_id());
         values.put(KEY_LOCATION_ID, parking.getKey_location_id());
-        values.put(TIME_IN, parking.getTime_in());
-        values.put(ACTIVE, parking.getActivation());
-        values.put(TIME_OUT, parking.getTime_out());
+        values.put(ACTIVE, parking.getActive());
+        values.put(CHARGE, parking.getCharge());
+        //values.put(TIME_IN, parking.getTime_in()); // default value set on insert.
+        //values.put(TIME_OUT, parking.getTime_out()); // on create park, time out will be null.
+
 
         // insert row
         long parking_id = db.insert(TABLE_PARKING, null, values);
@@ -220,21 +226,21 @@ public class DBOpenHelper extends SQLiteOpenHelper{
 
         Parking park = new Parking();
         park.setParking_id(c.getInt((c.getColumnIndex(KEY_ID))));
-        park.setKey_vehicle_id(c.getString(c.getColumnIndex(KEY_VEHICLE_ID)));
+        park.setKey_vehicle_id(c.getInt(c.getColumnIndex(KEY_VEHICLE_ID)));
         park.setKey_location_id(c.getInt(c.getColumnIndex(KEY_LOCATION_ID)));
         park.setTime_in(c.getString(c.getColumnIndex(TIME_IN)));
         park.setTime_out(c.getString(c.getColumnIndex(TIME_OUT)));
         park.setActive(c.getInt(c.getColumnIndex(ACTIVE)));
-
-        c.close();
+        park.setCharge(c.getDouble(c.getColumnIndex(CHARGE))); // added charge
+        //c.close();
         return park;
     }
 
     /**
-     * getting all parkings
+     * getting all parkings - returns List of parkings.
      * */
     public ArrayList<Parking> getAllParkings() {
-        ArrayList<Parking> parkings = new ArrayList<Parking>();
+        ArrayList<Parking> parkingList = new ArrayList<Parking>();
         String selectQuery = "SELECT  * FROM " + TABLE_PARKING;
 
         Log.e(LOG, selectQuery);
@@ -249,54 +255,66 @@ public class DBOpenHelper extends SQLiteOpenHelper{
                 parking.setParking_id(c.getInt((c.getColumnIndex(KEY_ID))));
                 parking.setTime_in(c.getString(c.getColumnIndex(TIME_IN)));
                 parking.setKey_location_id(c.getInt(c.getColumnIndex(KEY_LOCATION_ID)));
-                parking.setKey_vehicle_id(c.getString(c.getColumnIndex(KEY_VEHICLE_ID)));
+                parking.setKey_vehicle_id(c.getInt(c.getColumnIndex(KEY_VEHICLE_ID)));
                 parking.setActive(c.getInt(c.getColumnIndex(ACTIVE)));
+                parking.setCharge(c.getDouble(c.getColumnIndex(CHARGE))); // added charge
 
-                // adding to todo list
-                parkings.add(parking);
+                // adding to parking list
+                parkingList.add(parking);
             } while (c.moveToNext());
         }
         c.close();
-        return parkings;
+        return parkingList;
     }
 
-
-    public void deleteParking(String plate){
+    /*
+     * Updating a parking
+     */
+    public int updateParking(Parking parking) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_PARKING, KEY_VEHICLE_ID + " = ?",
-                new String[] { String.valueOf(plate)});
+
+        ContentValues values = new ContentValues();
+
+        values.put(KEY_ID, parking.getParking_id());
+        values.put(ACTIVE, parking.getActive());
+        values.put(CHARGE, parking.getCharge());
+        values.put(TIME_OUT, parking.getTime_out());
+
+        // updating row
+        return db.update(TABLE_PARKING, values, KEY_ID + " = ?",
+                new String[] { String.valueOf(parking.getParking_id())});
+    }
+
+    public void deleteParking(int parkingId){
+        // delete by parking id instead of plate. Can have multiple parking with the same plate. Use id to get unique value.
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_PARKING, KEY_ID + " = ?",
+                new String[] { String.valueOf(parkingId)});
     }
 
 // ------------------------ "vehicle" table methods ----------------//
 
 //see http://www.androidhive.info/2013/09/android-sqlite-database-with-multiple-tables/
     public int countVehicle(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        String count = "SELECT COUNT(*) FROM " + TABLE_VEHICLE;
+        String count = "SELECT * FROM " + TABLE_VEHICLE;
+        SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(count, null);
-        c.moveToFirst();
-        int icount = c.getInt(0);
+        int vCount = c.getCount();
         c.close();
-        return icount;
+        return vCount;
     }
 
     public boolean isVehicleExist (String plate){
-        SQLiteDatabase db = this.getReadableDatabase();
-        if (countVehicle() > 0) {
-            String selectQuery = "SELECT * FROM " + TABLE_VEHICLE +
-                    " WHERE " + PLATE_NUMBER+ " = " + plate;
 
-            Cursor c = db.rawQuery(selectQuery, null);
-            if (c.getCount() <= 0) {
-                c.close();
-                return false;
-            } else {
-                c.close();
-                return true;
-            }
-        } else {
+        String count = "SELECT * FROM " + TABLE_VEHICLE + " WHERE " + PLATE_NUMBER + " = \"" + plate + "\"";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(count, null);
+        int vCount = c.getCount();
+        c.close();
+        if (vCount > 0)
+            return  true;
+        else
             return false;
-        }
     }
 
     /*
@@ -304,7 +322,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
      */
     public long createVehicle(Vehicle vehicle) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Log.d("Database nih", vehicle.getPlateNumber());
+
         ContentValues values = new ContentValues();
         values.put(PLATE_NUMBER, vehicle.getPlateNumber());
         values.put(BRAND, vehicle.getBrand());
@@ -319,33 +337,31 @@ public class DBOpenHelper extends SQLiteOpenHelper{
     }
 
     //Getting a vehicle
-    public Vehicle getVehicle(String plate_number){
-        Vehicle vce;
+    public Vehicle getVehicleByPlateNumber(String plate_number){
+
         SQLiteDatabase db = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM " + TABLE_VEHICLE +
-                " WHERE " + PLATE_NUMBER + " = \"" + plate_number + ";";
+                " WHERE " + PLATE_NUMBER + " = \"" + plate_number + "\"";
         Log.e(LOG, selectQuery);
 
         Cursor c = db.rawQuery(selectQuery, null);
 
         if(c != null)
             c.moveToFirst();
-        vce = new Vehicle();
+
+        Vehicle vce = new Vehicle();
         vce.setId(c.getInt((c.getColumnIndex(KEY_ID))));
         vce.setPlateNumber(c.getString(c.getColumnIndex(PLATE_NUMBER)));
         vce.setBrand(c.getString(c.getColumnIndex(BRAND)));
         vce.setModel(c.getString(c.getColumnIndex(MODEL)));
         vce.setColor(c.getString(c.getColumnIndex(COLOR)));
         vce.setYearManufactured(c.getString(c.getColumnIndex(YEAR_MANUFACTURED)));
-
-        c.close();
-
+        //c.close();
         return vce;
     }
 
     //Getting a vehicle
     public Vehicle getVehicleById(long vehicle_id){
-        Vehicle vce;
         SQLiteDatabase db = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM " + TABLE_VEHICLE +
                 " WHERE " + KEY_ID + " = " + vehicle_id;
@@ -355,16 +371,15 @@ public class DBOpenHelper extends SQLiteOpenHelper{
 
         if(c != null)
             c.moveToFirst();
-        vce = new Vehicle();
+
+        Vehicle vce = new Vehicle();
         vce.setId(c.getInt((c.getColumnIndex(KEY_ID))));
         vce.setPlateNumber(c.getString(c.getColumnIndex(PLATE_NUMBER)));
         vce.setBrand(c.getString(c.getColumnIndex(BRAND)));
         vce.setModel(c.getString(c.getColumnIndex(MODEL)));
         vce.setColor(c.getString(c.getColumnIndex(COLOR)));
         vce.setYearManufactured(c.getString(c.getColumnIndex(YEAR_MANUFACTURED)));
-
-        c.close();
-
+        //c.close();
         return vce;
     }
 
@@ -373,7 +388,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
      * */
 
     public ArrayList<Vehicle> getAllVehicles() {
-        ArrayList<Vehicle> vehicles = new ArrayList<Vehicle>();
+        ArrayList<Vehicle> vehiclesList = new ArrayList<Vehicle>();
         String selectQuery = "SELECT  * FROM " + TABLE_VEHICLE;
 
         Log.e(LOG, selectQuery);
@@ -392,31 +407,54 @@ public class DBOpenHelper extends SQLiteOpenHelper{
                 vce.setColor(c.getString(c.getColumnIndex(COLOR)));
                 vce.setYearManufactured(c.getString(c.getColumnIndex(YEAR_MANUFACTURED)));
 
-                // adding to todo list
-                vehicles.add(vce);
+                // adding to vehicle list
+                vehiclesList.add(vce);
             } while (c.moveToNext());
         }
         c.close();
-        return vehicles;
+        return vehiclesList;
+    }
+    /*
+ * Updating a parking
+ */
+    public int updateVehicle(Vehicle vehicle) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(PLATE_NUMBER, vehicle.getPlateNumber());
+        values.put(BRAND, vehicle.getBrand());
+        values.put(MODEL, vehicle.getModel());
+        values.put(YEAR_MANUFACTURED, vehicle.getYearManufactured());
+        values.put(COLOR, vehicle.getColor());
+
+        // updating row
+        return db.update(TABLE_PARKING, values, KEY_ID + " = ?",
+                new String[] { String.valueOf(vehicle.getId())});
+    }
+
+    public void deleteVehicle(int vehicleId){
+        // delete by vehicle id
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_VEHICLE, KEY_ID + " = ?",
+                new String[] { String.valueOf(vehicleId)});
     }
 
 // ------------------------ "Location" table methods ----------------//
 
 //see http://www.androidhive.info/2013/09/android-sqlite-database-with-multiple-tables/
 
-    public boolean isLocationExist (int location_id){
+    public boolean isLocationExist (long location_id){
         SQLiteDatabase db = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM " + TABLE_LOCATION +
                 " WHERE " + KEY_ID + " = " + location_id;
 
         Cursor c = db.rawQuery(selectQuery, null);
-        if(c.getCount() <= 0){
-            c.close();
-            return false;
-        } else {
-            c.close();
+        int lCount = c.getCount();
+        if (lCount > 0)
             return true;
-        }
+        else
+            return false;
     }
 
     /**
@@ -433,12 +471,11 @@ public class DBOpenHelper extends SQLiteOpenHelper{
 
         // insert row
         long location_id = db.insert(TABLE_LOCATION, null, values);
-        Log.d("Location ID", Long.toString(location_id));
         return location_id;
     }
 
     //Getting a vehicle
-    public Location getLocation(long key_id){
+    public Location getLocationById(long key_id){
         SQLiteDatabase db = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM " + TABLE_LOCATION +
                 " WHERE " + KEY_ID + " = " + key_id;
@@ -453,8 +490,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
         loc.setLocation_id(c.getInt((c.getColumnIndex(KEY_ID))));
         loc.setLocation_name(c.getString(c.getColumnIndex(LOCATION_NAME)));
         loc.setCost(c.getInt(c.getColumnIndex(COST)));
-
-        c.close();
+        //c.close();
         return loc;
 
     }

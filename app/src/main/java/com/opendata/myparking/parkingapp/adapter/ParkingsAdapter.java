@@ -1,7 +1,6 @@
 package com.opendata.myparking.parkingapp.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,11 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.opendata.myparking.parkingapp.R;
-import com.opendata.myparking.parkingapp.activity.MainActivity;
 import com.opendata.myparking.parkingapp.database.DBOpenHelper;
-import com.opendata.myparking.parkingapp.model.Location;
 import com.opendata.myparking.parkingapp.model.Parking;
-import com.opendata.myparking.parkingapp.model.Vehicle;
 
 import java.util.ArrayList;
 
@@ -56,9 +52,9 @@ public class ParkingsAdapter extends ArrayAdapter<Parking> {
 
 
         //using data from database
-        final String plate_number = parkingArrayList.get(position).getKey_vehicle_id();
+        final long vehId = parkingArrayList.get(position).getKey_vehicle_id(); // UPDATED to check for vehicle Id. Plate number was here.
         final String timein = parkingArrayList.get(position).getTime_in();
-        Log.d("Vehicle on parking", plate_number);
+        Log.d("Vehicle on parking", String.valueOf(vehId));
         //Vehicle vce = db.getVehicle(plate_number);
         //Location loc = db.getLocation(parkingArrayList.get(position).getKey_location_id());
 
@@ -71,7 +67,7 @@ public class ParkingsAdapter extends ArrayAdapter<Parking> {
         final String colour = vce.getColor();*/
         //
 
-        viewHolder.plateNumber.setText(plate_number);
+        viewHolder.plateNumber.setText(String.valueOf(vehId)); // Updated to vehicleId .. Plate number was here.
         viewHolder.timeIn.setText(timein);
         // comment for the moment as we cant find the vehicle from the platenumber
         /*viewHolder.brand.setText("Brand: " + brand);

@@ -14,7 +14,6 @@ import com.opendata.myparking.parkingapp.R;
 import com.opendata.myparking.parkingapp.adapter.ParkingsAdapter;
 import com.opendata.myparking.parkingapp.database.DBOpenHelper;
 import com.opendata.myparking.parkingapp.model.Parking;
-import com.opendata.myparking.parkingapp.model.Vehicle;
 
 import java.util.ArrayList;
 
