@@ -6,12 +6,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -23,12 +18,8 @@ import android.widget.Toast;
 import com.github.clans.fab.FloatingActionButton;
 import com.opendata.myparking.parkingapp.R;
 import com.opendata.myparking.parkingapp.adapter.LocationsAdapter;
-import com.opendata.myparking.parkingapp.adapter.VehiclesAdapter;
 import com.opendata.myparking.parkingapp.database.DBOpenHelper;
 import com.opendata.myparking.parkingapp.model.Location;
-import com.opendata.myparking.parkingapp.model.Vehicle;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -130,7 +121,7 @@ public class LocationsFragment extends Fragment {
      * @param location_name is a location name
      * @param cost is cost per hour
      */
-    public void inputLocation(String location_name, int cost){
+    public void inputLocation(String location_name, Double cost){
         location = new Location();
         location.setLocation_name(location_name);
         location.setCost(cost);

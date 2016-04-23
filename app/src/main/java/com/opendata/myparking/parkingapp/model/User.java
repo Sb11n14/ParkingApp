@@ -4,6 +4,8 @@ package com.opendata.myparking.parkingapp.model;
  * Created by dp on 23/04/2016.
  */
 public class User {
+    private long userId;
+    private String username;
     private String first_name;
     private String last_name;
     private String plate_number;
@@ -12,12 +14,27 @@ public class User {
     public User(){
 
     }
-    public User(String first_name, String last_name, Double balance, String plate_number){
+    public User(String first_name, String last_name, Double balance, String plate_number, String username){
         this.first_name = first_name;
+        this.username = username;
         this.last_name = last_name;
         this.balance = balance;
         this.plate_number = plate_number;
 
+    }
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
     public Double getBalance() {
         return balance;

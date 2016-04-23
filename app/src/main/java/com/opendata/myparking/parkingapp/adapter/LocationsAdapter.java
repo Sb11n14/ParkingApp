@@ -1,7 +1,6 @@
 package com.opendata.myparking.parkingapp.adapter;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +36,7 @@ public class LocationsAdapter extends ArrayAdapter<Location> {
         viewHolder.cost = (TextView)itemView.findViewById(R.id.cost);
 
         final String location_name = locationArrayList.get(position).getLocation_name();
-        final int cost = locationArrayList.get(position).getCost();
+        final Double cost = locationArrayList.get(position).getCost();
 
         viewHolder.location.setText("Name :" + location_name);
         viewHolder.cost.setText("Cost/min : " + cost);

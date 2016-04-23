@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.opendata.myparking.parkingapp.model.Location;
 import com.opendata.myparking.parkingapp.model.Parking;
+import com.opendata.myparking.parkingapp.model.User;
 import com.opendata.myparking.parkingapp.model.Vehicle;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
 
     //Constants for db name and version
     private static final String DATABASE_NAME = "parking.db";
-    private static final int DATABASE_VERSION = 4; //incremented
+    private static final int DATABASE_VERSION = 5; //incremented
 
 
     //Constants for identifying table & column
@@ -67,7 +68,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
     public static final String FIRST_NAME = "first_name";
     public static final String LAST_NAME = "last_name";
     public static final String BALANCE = "balance";
-
+    public static final String USERNAME = "username";
 
     public static final String [] ALL_COLUMNS_PARKING =
             {KEY_ID, TIME_IN, TIME_OUT, ACTIVE, KEY_LOCATION_ID, KEY_VEHICLE_ID, CHARGE};
@@ -89,8 +90,8 @@ public class DBOpenHelper extends SQLiteOpenHelper{
                     KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + //autoincrement added for pk
                     TIME_IN + " TEXT default CURRENT_TIMESTAMP , " + //sets default to current timestamp value.
                     TIME_OUT + " TEXT, " +
-                    ACTIVE + " INTEGER, " +
-                    CHARGE + " DECIMAL, " +
+                    ACTIVE + " INTEGER default 1, " +
+                    CHARGE + " DECIMAL default 0.0, " +
                     KEY_LOCATION_ID + " INTEGER, " +
                     KEY_VEHICLE_ID + " TEXT" +
                     ");";
@@ -124,6 +125,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
                     LAST_NAME + " TEXT, " +
                     BALANCE + " DECIMAL, " +
                     PLATE_NUMBER + " TEXT " +
+                    USERNAME + " TEXT " +
                     ");";
 
     public DBOpenHelper(Context context) {
@@ -190,6 +192,30 @@ public class DBOpenHelper extends SQLiteOpenHelper{
         else
             return false;
 
+    }
+    public Parking getParkingByVehicleId (long vehicleId){
+
+        String count = "SELECT * FROM " + TABLE_PARKING +
+                " WHERE " + KEY_VEHICLE_ID + " = " + vehicleId +
+                " AND " + ACTIVE + " = " + ACTIVE_STATUS;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(count, null);
+
+
+
+        if(c != null)
+            c.moveToFirst();
+
+        Parking park = new Parking();
+        park.setParking_id(c.getInt((c.getColumnIndex(KEY_ID))));
+        park.setKey_vehicle_id(c.getInt(c.getColumnIndex(KEY_VEHICLE_ID)));
+        park.setKey_location_id(c.getInt(c.getColumnIndex(KEY_LOCATION_ID)));
+        park.setTime_in(c.getString(c.getColumnIndex(TIME_IN)));
+        park.setTime_out(c.getString(c.getColumnIndex(TIME_OUT)));
+        park.setActive(c.getInt(c.getColumnIndex(ACTIVE)));
+        park.setCharge(c.getDouble(c.getColumnIndex(CHARGE))); // added charge
+        //c.close();
+        return park;
     }
 
 
@@ -440,6 +466,164 @@ public class DBOpenHelper extends SQLiteOpenHelper{
                 new String[] { String.valueOf(vehicleId)});
     }
 
+
+    // ------------------------ "User" table methods ----------------//
+
+    //see http://www.androidhive.info/2013/09/android-sqlite-database-with-multiple-tables/
+    public int countUser(){
+        String count = "SELECT * FROM " + TABLE_USER;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(count, null);
+        int vCount = c.getCount();
+        c.close();
+        return vCount;
+    }
+
+    public boolean isUserExist (String username){
+
+        String count = "SELECT * FROM " + TABLE_USER +
+                        " WHERE " + USERNAME + " = \"" + username + "\"";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(count, null);
+        int vCount = c.getCount();
+        c.close();
+        if (vCount > 0)
+            return  true;
+        else
+            return false;
+    }
+
+    /*
+     * Creating vehicle
+     */
+    public long createUser(User user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(FIRST_NAME, user.getFirst_name());
+        values.put(LAST_NAME, user.getLast_name());
+        values.put(PLATE_NUMBER, user.getPlate_number());
+        values.put(USERNAME, user.getUsername());
+        values.put(BALANCE, user.getBalance());
+
+        // insert row
+        long user_id = db.insert(TABLE_USER, null, values);
+
+        return user_id;
+    }
+
+    //Getting a User
+    public User getUserByUsername(String username){
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM " + TABLE_USER +
+                                " WHERE " + USERNAME + " = \"" + username + "\"";
+        Log.e(LOG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if(c != null)
+            c.moveToFirst();
+
+        User user = new User();
+        user.setUserId(c.getInt((c.getColumnIndex(KEY_ID))));
+        user.setFirst_name(c.getString(c.getColumnIndex(FIRST_NAME)));
+        user.setLast_name(c.getString(c.getColumnIndex(LAST_NAME)));
+        user.setBalance(c.getDouble(c.getColumnIndex(BALANCE)));
+        user.setUsername(c.getString(c.getColumnIndex(USERNAME)));
+        user.setPlate_number(c.getString(c.getColumnIndex(PLATE_NUMBER)));
+        //c.close();
+        return user;
+    }
+
+    //Getting a User
+    public User getUserById(long userId){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM " + TABLE_USER +
+                " WHERE " + KEY_ID + " = " + userId;
+        Log.e(LOG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if(c != null)
+            c.moveToFirst();
+
+        User user = new User();
+        user.setUserId(c.getInt((c.getColumnIndex(KEY_ID))));
+        user.setFirst_name(c.getString(c.getColumnIndex(FIRST_NAME)));
+        user.setLast_name(c.getString(c.getColumnIndex(LAST_NAME)));
+        user.setBalance(c.getDouble(c.getColumnIndex(BALANCE)));
+        user.setUsername(c.getString(c.getColumnIndex(USERNAME)));
+        user.setPlate_number(c.getString(c.getColumnIndex(PLATE_NUMBER)));
+        //c.close();
+        return user;
+    }
+
+    /**
+     * Getting all User
+     * */
+
+    public ArrayList<User> getAllUser() {
+        ArrayList<User> userList = new ArrayList<User>();
+        String selectQuery = "SELECT  * FROM " + TABLE_USER;
+
+        Log.e(LOG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (c.moveToFirst()) {
+            do {
+                User user = new User();
+                user.setUserId(c.getInt((c.getColumnIndex(KEY_ID))));
+                user.setFirst_name(c.getString(c.getColumnIndex(FIRST_NAME)));
+                user.setLast_name(c.getString(c.getColumnIndex(LAST_NAME)));
+                user.setBalance(c.getDouble(c.getColumnIndex(BALANCE)));
+                user.setUsername(c.getString(c.getColumnIndex(USERNAME)));
+                user.setPlate_number(c.getString(c.getColumnIndex(PLATE_NUMBER)));
+
+                // adding to User list
+                userList.add(user);
+            } while (c.moveToNext());
+        }
+        c.close();
+        return userList;
+    }
+    /*
+ * Updating a User
+ */
+    public int updateUserFirstAndLastName(User user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(FIRST_NAME, user.getFirst_name());
+        values.put(LAST_NAME, user.getLast_name());
+
+        // updating row
+        return db.update(TABLE_PARKING, values, KEY_ID + " = ?",
+                new String[] { String.valueOf(user.getUserId())});
+    }
+    public int updateUserName(User user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(USERNAME, user.getUsername());
+
+        // updating row
+        return db.update(TABLE_PARKING, values, KEY_ID + " = ?",
+                new String[] { String.valueOf(user.getUserId())});
+    }
+
+    public void deleteUser(int userId){
+        // delete by User id
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_USER, KEY_ID + " = ?",
+                new String[] { String.valueOf(userId)});
+    }
+
 // ------------------------ "Location" table methods ----------------//
 
 //see http://www.androidhive.info/2013/09/android-sqlite-database-with-multiple-tables/
@@ -448,6 +632,18 @@ public class DBOpenHelper extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM " + TABLE_LOCATION +
                 " WHERE " + KEY_ID + " = " + location_id;
+
+        Cursor c = db.rawQuery(selectQuery, null);
+        int lCount = c.getCount();
+        if (lCount > 0)
+            return true;
+        else
+            return false;
+    }
+    private boolean LocationExistByName (String name){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM " + TABLE_LOCATION +
+                " WHERE " + LOCATION_NAME + " = \"" + name + "\"";
 
         Cursor c = db.rawQuery(selectQuery, null);
         int lCount = c.getCount();
@@ -473,8 +669,26 @@ public class DBOpenHelper extends SQLiteOpenHelper{
         long location_id = db.insert(TABLE_LOCATION, null, values);
         return location_id;
     }
+    public Location createDefaultLocation() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Location loc = null;
 
-    //Getting a vehicle
+        if (!LocationExistByName("Default")){
+            ContentValues values = new ContentValues();
+            values.put(LOCATION_NAME, "Default");
+            values.put(COST, 0.25);
+
+            // insert row
+            long location_id = db.insert(TABLE_LOCATION, null, values);
+            loc = getLocationById(location_id);
+
+        }else{
+            loc = getLocationByName("Default");
+        }
+        return loc;
+    }
+
+    //Getting a Location
     public Location getLocationById(long key_id){
         SQLiteDatabase db = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM " + TABLE_LOCATION +
@@ -489,7 +703,26 @@ public class DBOpenHelper extends SQLiteOpenHelper{
         Location loc = new Location();
         loc.setLocation_id(c.getInt((c.getColumnIndex(KEY_ID))));
         loc.setLocation_name(c.getString(c.getColumnIndex(LOCATION_NAME)));
-        loc.setCost(c.getInt(c.getColumnIndex(COST)));
+        loc.setCost(c.getDouble(c.getColumnIndex(COST)));
+        //c.close();
+        return loc;
+
+    }
+    public Location getLocationByName(String name){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM " + TABLE_LOCATION +
+                " WHERE " + LOCATION_NAME + " = \"" + name + "\"";
+        Log.e(LOG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if(c != null)
+            c.moveToFirst();
+
+        Location loc = new Location();
+        loc.setLocation_id(c.getInt((c.getColumnIndex(KEY_ID))));
+        loc.setLocation_name(c.getString(c.getColumnIndex(LOCATION_NAME)));
+        loc.setCost(c.getDouble(c.getColumnIndex(COST)));
         //c.close();
         return loc;
 
@@ -510,9 +743,9 @@ public class DBOpenHelper extends SQLiteOpenHelper{
                 Location location = new Location();
                 location.setLocation_id(c.getInt((c.getColumnIndex(KEY_ID))));
                 location.setLocation_name(c.getString(c.getColumnIndex(LOCATION_NAME)));
-                location.setCost(c.getInt(c.getColumnIndex(COST)));
+                location.setCost(c.getDouble(c.getColumnIndex(COST)));
 
-                // adding to todo list
+                // adding to location list
                 locations.add(location);
             } while (c.moveToNext());
         }

@@ -6,12 +6,12 @@ package com.opendata.myparking.parkingapp.model;
 public class Location {
     private long location_id;
     private String location_name;
-    private int cost; //Cost per hour
+    private Double cost; //Cost per hour
 
     public Location(){
 
     }
-    public Location(String location_name, int cost){
+    public Location(String location_name, Double cost){
         this.location_name = location_name;
         this.cost = cost;
     }
@@ -32,10 +32,10 @@ public class Location {
         return location_name;
     }
 
-    public int getCost(){
+    public Double getCost(){
         return cost;
     }
-    public void setCost (int cost){
+    public void setCost (Double cost){
         this.cost = cost;
     }
 }

@@ -22,7 +22,10 @@ public class Parking {
         this.active = active;
         this.charge = charge;
     }
-
+    public Parking (long vehicle_id, long location_id){
+        this.key_vehicle_id = vehicle_id;
+        this.key_location_id = location_id;
+    }
     public void setParking_id (int parking_id){
         this.parking_id = parking_id;
     }

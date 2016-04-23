@@ -65,8 +65,7 @@ public class HomeFragment extends Fragment {
     private TextView resultTextView;
     private ImageView imageView;
     private FloatingActionButton fabButton;
-    private String plate_number;
-    private DBOpenHelper db;
+    //private String plate_number;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -76,7 +75,7 @@ public class HomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        db = new DBOpenHelper(getActivity().getApplicationContext());
+
         /*Log.d("*****Testing: ", "Parking******");
         //Parking testing.
         Parking park1 = new Parking(1,1,1,5.0);
@@ -156,35 +155,10 @@ public class HomeFragment extends Fragment {
 
         resultTextView.setText("Welcome! Press the red button below to scan your plae number.");
 
-        // Inflate the layout for this fragment
-
         /**
          * For testing only
+         * plate_number = "MT09NKS";
          */
-
-        //Check the plate number in database, if it is not available, access open data
-        /*db = new DBOpenHelper(getActivity().getApplicationContext());
-        plate_number = "MT09NKS";
-        if (db.isParkingExist(plate_number)){
-            Parking park = db.getParking(plate_number); //Here we can pick the id of location
-            Log.d("isParkingExist",plate_number);
-            //updateParking(plate_number);
-        } else {
-            if (db.isVehicleExist(plate_number)) {
-                Vehicle vce = db.getVehicle(plate_number);
-                Location loc = getParkingLocation(1); //test set key id of parking location to 1
-                insertParking(plate_number, vce, loc);
-                Log.d("isVehicleExist",plate_number);
-            } else {
-                //Log.d("Plate Number", plate_number);
-                //Accessing open data of plate number
-                String urlString = "https://dvlasearch.appspot.com/DvlaSearch?licencePlate=" + plate_number + "&apikey=DvlaSearchDemoAccount";
-                new JSONTask().execute(urlString);
-            }
-        }
-        db.closeDB();
-        *///For testing only EOF
-
         return rootView;
     }
 
@@ -236,34 +210,45 @@ public class HomeFragment extends Fragment {
                                     Toast.makeText(getActivity(), "It was not possible to detect the licence plate.", Toast.LENGTH_LONG).show();
                                     resultTextView.setText("It was not possible to detect the licence plate.");
                                 } else {
+
+                                    DBOpenHelper db = new DBOpenHelper(getActivity().getApplicationContext());
+                                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                                    Location aLocation = db.createDefaultLocation(); // Creates a default locaton with value.
+
                                     resultTextView.setText("Plate: " + results.getResults().get(0).getPlate()
                                             // Trim confidence to two decimal places
                                             + " Confidence: " + String.format("%.2f", results.getResults().get(0).getConfidence()) + "%"
                                             // Convert processing time to seconds and trim to two decimal places
                                             + " Processing time: " + String.format("%.2f", ((results.getProcessing_time_ms() / 1000.0) % 60)) + " seconds");
 
-                                    plate_number = results.getResults().get(0).getPlate();
+                                    String plate_number = results.getResults().get(0).getPlate();
 
+                                    if (db.isVehicleExist(plate_number)){
+                                        //yes .. exist.
+                                        Vehicle aVehicle = db.getVehicleByPlateNumber(plate_number); // get the vehicle
 
-                                    //Check the plate number in database, if it is not available, access open data
-                                    db = new DBOpenHelper(getActivity().getApplicationContext());
-                                    if (db.isVehicleParked(1)) { //fix this!!!!!!
-                                        //Parking park = db.getParking(plate_number); //Here we can pick the id of location
-                                        //updateParking(plate_number);
-                                    } else {
-                                        if (db.isVehicleExist(plate_number)) {
-                                            Vehicle vce = db.getVehicleByPlateNumber(plate_number);
-                                            Location loc = getParkingLocation(1); //test set key id of parking location to 1
-                                            insertParking(plate_number, 1); //For test only set location id 1
-                                        } else {
-                                            //Log.d("Plate Number", plate_number);
-                                            //Accessing open data of plate number
-                                            String urlString = "https://dvlasearch.appspot.com/DvlaSearch?licencePlate=" + plate_number + "&apikey=DvlaSearchDemoAccount";
-                                            new JSONTask().execute(urlString);
+                                        if (db.isVehicleParked(aVehicle.getId())){
+                                            //yes.. vehicle is parked
+                                            Parking aParking = db.getParkingByVehicleId(aVehicle.getId()); // get current parking record for this vehicle.
+                                            Date TimeOut = new Date();
+                                            Date TimeIn = stringToDate(aParking.getTime_in());
+                                            long diffTimes = TimeOut.getTime() -  TimeIn.getTime();
+                                            aParking.setCharge(diffTimes * aLocation.getCost()); // set charge.
+                                            aParking.setActive(0); // 0 is inactive.
+                                            aParking.setTime_out(dateToString(TimeOut,"yyyy-MM-dd-hh-mm-ss")); //
+                                            db.updateParking(aParking);
+                                        }else{
+                                            //no.. vehicle is not parked.
+                                            Parking p = new Parking(aVehicle.getId(),aLocation.getLocation_id());
+                                            db.createParking(p);
                                         }
+
+                                    }else{
+                                        //doesnt exist .. so insert.
+                                        String urlString = "https://dvlasearch.appspot.com/DvlaSearch?licencePlate=" + plate_number + "&apikey=DvlaSearchDemoAccount";
+                                        new JSONTask().execute(urlString,plate_number);
                                     }
                                     db.closeDB();
-
                                 }
                             }
                         });
@@ -284,107 +269,6 @@ public class HomeFragment extends Fragment {
             });
         }
     }
-
-    private Location insertLocation(String name, int cost) {
-
-        Location loc = new Location();
-
-
-        loc.setLocation_name(name);
-        loc.setCost(cost);
-        long location_id = db.createLocation(loc);
-
-        loc.setLocation_id(location_id);
-
-        db.closeDB();
-        return loc;
-    }
-
-    private Location getParkingLocation(int location_id) {
-
-        db = new DBOpenHelper(getActivity().getApplicationContext());
-        Location loc = db.getLocationById(location_id);
-
-        db.closeDB();
-        return loc;
-    }
-
-    /*private boolean isParked(String plate_number) {
-        boolean isAvailable;
-        db = new DBOpenHelper(getActivity().getApplicationContext());
-
-        if(db.getParking(plate_number)==null){
-            isAvailable = false;
-        } else {
-            isAvailable = true;
-        }
-
-        db.closeDB();
-        return isAvailable;
-    }*/
-
-    private void insertParking(String plate_number, long location_id) {
-        String time_in = dateToString(new Date(), "dd/MM/yyyy hh:mm:ss");
-
-        Parking park = new Parking();
-        //park.setKey_vehicle_id(plate_number);
-        park.setKey_location_id(location_id);
-        park.setTime_in(time_in);
-        park.setActive(1);
-
-        long parking_id = db.createParking(park);
-        //Log.d("Vehicle id", db.getParkingById(parking_id).getKey_vehicle_id());
-    }
-
-    private void updateParking(String plate_number) {
-
-    }
-
-
-    /**
-     * Insert a vehicle into Database
-     */
-    public void insertVehicle(Vehicle vehicle){
-        db = new DBOpenHelper(getActivity().getApplicationContext());
-
-        // Inserting a vehicle in db
-        long vehicle1_id = db.createVehicle(vehicle);
-
-        Log.d("Vehicle Count", " Count: " + db.getAllVehicles().size());
-
-        // Don't forget to close database connection
-        db.closeDB();
-
-    }
-
-    /**
-     * Checking a vehicle in Database
-     * @param plate_number
-     * @return boolean isVehicle
-     */
-    private boolean isVehicleAvailable(String plate_number) {
-        boolean isAvailable;
-        db = new DBOpenHelper(getActivity().getApplicationContext());
-
-        if (db.getVehicleByPlateNumber(plate_number)==null){
-            isAvailable = false;
-        } else {
-            isAvailable = true;
-        }
-
-        db.closeDB();
-        return isAvailable;
-    }
-/*
-    private Vehicle getVehicle(String plate_number){
-        db = new DBOpenHelper(getActivity().getApplicationContext());
-        Vehicle vce = db.getVehicle(plate_number);
-
-        db.closeDB();
-
-        return vce;
-    }*/
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
@@ -413,7 +297,7 @@ public class HomeFragment extends Fragment {
      */
     public void takePicture() {
         // Use a folder to store all results
-        File folder = new File(Environment.getExternalStorageDirectory() + "/OpenALPR/");
+        File folder = new File(Environment.getExternalStorageDirectory() + "/OpenParking/");
         if (!folder.exists()) {
             folder.mkdir();
         }
@@ -428,10 +312,22 @@ public class HomeFragment extends Fragment {
     }
 
     //This works
-    public String dateToString(Date date, String format) {
+    private String dateToString(Date date, String format) {
         SimpleDateFormat df = new SimpleDateFormat(format, Locale.getDefault());
 
         return df.format(date);
+    }
+    private Date stringToDate(String dataString){
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Date date = null;
+        try {
+            date = formatter.parse(dataString);
+
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
     }
 
     @Override
@@ -465,10 +361,12 @@ public class HomeFragment extends Fragment {
 
             HttpURLConnection connection = null;
             BufferedReader reader = null;
+            Vehicle vehicle = new Vehicle();
 
             try {
 
                 URL url = new URL(params[0]);
+                String plate_number = params[1];
 
                 connection = (HttpURLConnection) url.openConnection();
                 connection.connect();
@@ -486,24 +384,27 @@ public class HomeFragment extends Fragment {
                 String finalJson = buffer.toString();
 
                 JSONObject parentObject = new JSONObject(finalJson);
-                //JSONArray parentArray = parentObject.getJSONArray("movies");
-                //JSONObject finalObject = parentArray.getJSONObject(0);
 
-                String make = parentObject.getString("make");
-                String model = parentObject.getString("model");
-                String colour = parentObject.getString("colour");
-                String year = parentObject.getString("yearOfManufacture");
+                if (!parentObject.has("error")){
+                    String make = parentObject.getString("make");
+                    String model = parentObject.getString("model");
+                    String colour = parentObject.getString("colour");
+                    String year = parentObject.getString("yearOfManufacture");
 
-                //Log.d("JSONTask",plate_number);
+                    vehicle.setPlateNumber(plate_number);
+                    vehicle.setBrand(make);
+                    vehicle.setModel(model);
+                    vehicle.setYearManufactured(year);
+                    vehicle.setColor(colour);
 
-                Vehicle vehicle = new Vehicle();
-                vehicle.setPlateNumber(plate_number);
-                vehicle.setBrand(make);
-                vehicle.setModel(model);
-                vehicle.setYearManufactured(year);
-                vehicle.setColor(colour);
+                }else {
+                    vehicle.setPlateNumber("Unknown");
+                    vehicle.setBrand("Unknown");
+                    vehicle.setModel("Unknown");
+                    vehicle.setYearManufactured("Unknown");
+                    vehicle.setColor("Unknown");
 
-                return vehicle;
+                }
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -533,50 +434,11 @@ public class HomeFragment extends Fragment {
             super.onPostExecute(result);
 
             try {
+                DBOpenHelper db = new DBOpenHelper(getActivity().getApplicationContext());
                 long vehicle_id = db.createVehicle(result);
-
-                Log.d("Total vehicle", String.valueOf(db.countVehicle()));
-                //Still do not understand why it can not retrieve a vehicle by plate number
-                //But when I retrieve by key id, it works!
-                //Bye bye for a while
-
-                // comment for the moment as we cant find the vehicle from the platenumber
-               // Vehicle vce = db.getVehicle(plate_number);
-                //Vehicle vce = db.getVehicleById(vehicle_id);
-                //Log.d("Vehicle is plate", "Plate Number: " + vce.getPlateNumber() + ", ID: " + vce.getId());
-                //
-
-                //Location loc = getParkingLocation(1); //to test only
-                //Log.d("Location", loc.getLocation_name());
-
-
-                ////
-                //try to insert parking time and vehicle
-
-                //insertParking(result.getPlateNumber(), result, loc); //insert parking
-                //insertParking(result.getPlateNumber(), result, loc);
-
-                //insertParking(plate_number, vce, loc);
-
-                //vehicle.setPlateNumber(plate_number);
-               //vehicle_id;
-
-                //String plate_number, Vehicle vehicle, Location location
-
-
-                //insert automatically few locations in the database;
-                // String name and int price per hour
-                Location location1 = insertLocation("Uni Parking", 2);
-                Location location2 = insertLocation("Private Parking", 4);
-                Log.d("parking 1 ", location1.getLocation_name());
-                Log.d("parking 2 ", location2.getLocation_name());
-
-                Log.d("Vehicle is plate", "Plate Number: " + result.getPlateNumber() + ", ID: " + result.getId());
-                insertParking(result.getPlateNumber(), 1); //testing for only location parking with `ID is 1
-                Log.d("insert parking", String.valueOf(db.countParking()));
-
-
-
+                Location aLocation = db.createDefaultLocation(); // Creates a default locaton with value.
+                Parking park = new Parking(vehicle_id,aLocation.getLocation_id());
+                db.closeDB();
 
 
             } catch(Exception e) {
@@ -586,15 +448,13 @@ public class HomeFragment extends Fragment {
             }
 
             //dialog.dismiss();
-
             if(result != null) {
 
             } else {
                 Toast.makeText(getActivity().getApplicationContext(), "The plate number is not recognised.", Toast.LENGTH_SHORT).show();
             }
+
         }
-
-
 
     }
 }

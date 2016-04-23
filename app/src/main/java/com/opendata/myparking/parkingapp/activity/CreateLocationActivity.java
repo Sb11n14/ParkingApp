@@ -1,11 +1,9 @@
 package com.opendata.myparking.parkingapp.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -55,7 +53,7 @@ public class CreateLocationActivity extends ActionBarActivity {
             public void onClick(View view) {
                 db = new DBOpenHelper(getApplicationContext());
                 String location = inputLocation.getText().toString().trim();
-                int cost = Integer.parseInt(inputCost.getText().toString().trim());
+                Double cost = Double.parseDouble(inputCost.getText().toString().trim());
                 inputLocation(location, cost);
                 db.closeDB();
                 onBackPressed();
@@ -93,7 +91,7 @@ public class CreateLocationActivity extends ActionBarActivity {
      * @param location_name is a location name
      * @param cost is cost per hour
      */
-    public void inputLocation(String location_name, int cost){
+    public void inputLocation(String location_name, Double cost){
         location = new Location();
         location.setLocation_name(location_name);
         location.setCost(cost);
