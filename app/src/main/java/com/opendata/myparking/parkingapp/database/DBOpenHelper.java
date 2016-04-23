@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 /**
  * Created by is chan on 17/04/2016.
+ * Updated by dp on 23/04/2016.
  */
 public class DBOpenHelper extends SQLiteOpenHelper{
     // Logcat tag
@@ -23,7 +24,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
 
     //Constants for db name and version
     private static final String DATABASE_NAME = "parking.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4; //incremented
 
 
     //Constants for identifying table & column
@@ -32,17 +33,19 @@ public class DBOpenHelper extends SQLiteOpenHelper{
     public static final String TABLE_PARKING = "parking";
     public static final String TABLE_LOCATION = "location";
     public static final String TABLE_VEHICLE = "vehicle";
+    public static final String TABLE_USER = "user";
 
     // Common column names
     private static final String KEY_ID = "_id";
 
     // PARKING Table - column names
     //public static final String PARKING_ID = "_id";
-    public static final String TIME_IN = "timein";
-    public static final String TIME_OUT = "timeout";
+    public static final String TIME_IN = "timein"; //datetime values.
+    public static final String TIME_OUT = "timeout"; //datetime values.
     public static final String ACTIVE = "active";
     private static final String KEY_LOCATION_ID = "location_id";
     private static final String KEY_VEHICLE_ID = "vehicle_id";
+    public static final String CHARGE = "charge";
 
     // LOCATION Table - column names
     //public static final String LOCATION_ID = "_id";
@@ -56,8 +59,14 @@ public class DBOpenHelper extends SQLiteOpenHelper{
     public static final String YEAR_MANUFACTURED = "year_manufactured";
     public static final String COLOR = "color";
 
+    // User Table - column names
+    public static final String FIRST_NAME = "first_name";
+    public static final String LAST_NAME = "last_name";
+    public static final String BALANCE = "balance";
+
+
     public static final String [] ALL_COLUMNS_PARKING =
-            {KEY_ID, TIME_IN, TIME_OUT, ACTIVE, KEY_LOCATION_ID, KEY_VEHICLE_ID};
+            {KEY_ID, TIME_IN, TIME_OUT, ACTIVE, KEY_LOCATION_ID, KEY_VEHICLE_ID, CHARGE};
 
     public static final String [] ALL_COLUMNS_LOCATION =
             {KEY_ID, LOCATION_NAME, COST};
@@ -65,15 +74,19 @@ public class DBOpenHelper extends SQLiteOpenHelper{
     public static final String [] ALL_COLUMNS_VEHICLE =
             {KEY_ID, PLATE_NUMBER, BRAND, MODEL, YEAR_MANUFACTURED, COLOR};
 
+    public static final String [] ALL_COLUMNS_USER =
+            {KEY_ID, FIRST_NAME, LAST_NAME, BALANCE, PLATE_NUMBER};
+
 
     // parking table create statement
     //KEY_VEHICLE_ID set for plate number
     private static final String CREATE_TABLE_PARKING =
             "CREATE TABLE " + TABLE_PARKING + " (" +
-                    KEY_ID + " INTEGER PRIMARY KEY, " +
-                    TIME_IN + " TEXT, " +
+                    KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + //autoincrement added for pk
+                    TIME_IN + " TEXT default CURRENT_TIMESTAMP , " + //sets default to current timestamp value.
                     TIME_OUT + " TEXT, " +
                     ACTIVE + " INTEGER, " +
+                    CHARGE + " DECIMAL, " +
                     KEY_LOCATION_ID + " INTEGER, " +
                     KEY_VEHICLE_ID + " TEXT" +
                     ");";
@@ -82,7 +95,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
     // location table create statement
     private static final String CREATE_TABLE_LOCATION =
             "CREATE TABLE " + TABLE_LOCATION + " (" +
-                    KEY_ID + " INTEGER PRIMARY KEY, " +
+                    KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     LOCATION_NAME + " TEXT, " +
                     COST + " INTEGER" +
                     ");";
@@ -91,7 +104,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
     // vehicle table create statement
     private static final String CREATE_TABLE_VEHICLE =
             "CREATE TABLE " + TABLE_VEHICLE + " (" +
-                    KEY_ID + " INTEGER PRIMARY KEY, " +
+                    KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     PLATE_NUMBER + " TEXT, " +
                     BRAND + " TEXT, " +
                     MODEL + " TEXT, " +
@@ -99,16 +112,20 @@ public class DBOpenHelper extends SQLiteOpenHelper{
                     COLOR + " TEXT" +
                     ");";
 
-
-    //Context c;
+    // user table create statement (dp)
+    private static final String CREATE_TABLE_USER =
+            "CREATE TABLE " + TABLE_USER + " (" +
+                    KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    FIRST_NAME + " TEXT, " +
+                    LAST_NAME + " TEXT, " +
+                    BALANCE + " DECIMAL, " +
+                    PLATE_NUMBER + " TEXT " +
+                    ");";
 
     public DBOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
 
-        //c= context;
-
     }
-
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -118,6 +135,9 @@ public class DBOpenHelper extends SQLiteOpenHelper{
         db.execSQL(CREATE_TABLE_PARKING);
         db.execSQL(CREATE_TABLE_LOCATION);
         db.execSQL(CREATE_TABLE_VEHICLE);
+        db.execSQL(CREATE_TABLE_USER); //new
+
+        Log.d("DBOpenHelper","db created");
     }
 
     @Override
@@ -127,7 +147,10 @@ public class DBOpenHelper extends SQLiteOpenHelper{
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PARKING);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATION);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_VEHICLE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER); //new
         onCreate(db);
+
+        Log.d("DBOpenHelper","db dropped and re-created");
     }
 
     public void closeDB() {

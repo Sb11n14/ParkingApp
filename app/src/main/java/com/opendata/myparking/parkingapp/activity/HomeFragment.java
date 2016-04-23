@@ -76,6 +76,8 @@ public class HomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        db = new DBOpenHelper(getActivity().getApplicationContext());
+        db.getWritableDatabase();
 
     }
 

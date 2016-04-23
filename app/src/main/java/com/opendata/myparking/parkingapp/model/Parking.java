@@ -10,6 +10,7 @@ public class Parking {
     private String time_in;
     private String time_out;
     private int active; //1 for true active, otherwise 0
+    private Double charge;
 
     public Parking (){
 
@@ -66,6 +67,16 @@ public class Parking {
     public String getTime_out (){
 
         return this.time_out;
+    }
+
+    public void setCharge (Double charge){
+        this.charge = charge;
+    }
+
+    public Double getCharge (){
+
+        return this.charge;
+
     }
 
     public int getActivation(){
