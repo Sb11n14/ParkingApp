@@ -1,5 +1,7 @@
 package com.opendata.myparking.parkingapp.model;
 
+import java.util.Date;
+
 /**
  * Created by is chan on 17/04/2016.
  */
@@ -21,10 +23,14 @@ public class Parking {
         this.key_location_id = location_id;
         this.active = active;
         this.charge = charge;
+        this.time_in = new Date().toString();
     }
-    public Parking (long vehicle_id, long location_id){
+    public Parking (long vehicle_id, long location_id, String time_in){
         this.key_vehicle_id = vehicle_id;
         this.key_location_id = location_id;
+        this.charge = 0.0;
+        this.active = 1;
+        this.time_in = time_in;
     }
     public void setParking_id (int parking_id){
         this.parking_id = parking_id;

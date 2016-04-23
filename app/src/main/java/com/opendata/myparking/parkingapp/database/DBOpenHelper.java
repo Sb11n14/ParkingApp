@@ -88,10 +88,10 @@ public class DBOpenHelper extends SQLiteOpenHelper{
     private static final String CREATE_TABLE_PARKING =
             "CREATE TABLE " + TABLE_PARKING + " (" +
                     KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + //autoincrement added for pk
-                    TIME_IN + " TEXT default CURRENT_TIMESTAMP , " + //sets default to current timestamp value.
-                    TIME_OUT + " TEXT, " +
-                    ACTIVE + " INTEGER default 1, " +
-                    CHARGE + " DECIMAL default 0.0, " +
+                    TIME_IN + " DATE, " +
+                    TIME_OUT + " DATE, " +
+                    ACTIVE + " INTEGER, " +
+                    CHARGE + " DECIMAL, " +
                     KEY_LOCATION_ID + " INTEGER, " +
                     KEY_VEHICLE_ID + " TEXT" +
                     ");";
@@ -194,11 +194,12 @@ public class DBOpenHelper extends SQLiteOpenHelper{
 
     }
     public Parking getParkingByVehicleId (long vehicleId){
-
+        SQLiteDatabase db = this.getReadableDatabase();
         String count = "SELECT * FROM " + TABLE_PARKING +
                 " WHERE " + KEY_VEHICLE_ID + " = " + vehicleId +
                 " AND " + ACTIVE + " = " + ACTIVE_STATUS;
-        SQLiteDatabase db = this.getReadableDatabase();
+        Log.e(LOG, count);
+
         Cursor c = db.rawQuery(count, null);
 
 
@@ -227,7 +228,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
         values.put(KEY_LOCATION_ID, parking.getKey_location_id());
         values.put(ACTIVE, parking.getActive());
         values.put(CHARGE, parking.getCharge());
-        //values.put(TIME_IN, parking.getTime_in()); // default value set on insert.
+        values.put(TIME_IN, parking.getTime_in());
         //values.put(TIME_OUT, parking.getTime_out()); // on create park, time out will be null.
 
 
@@ -280,6 +281,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
                 Parking parking = new Parking();
                 parking.setParking_id(c.getInt((c.getColumnIndex(KEY_ID))));
                 parking.setTime_in(c.getString(c.getColumnIndex(TIME_IN)));
+                parking.setTime_out(c.getString(c.getColumnIndex(TIME_OUT)));
                 parking.setKey_location_id(c.getInt(c.getColumnIndex(KEY_LOCATION_ID)));
                 parking.setKey_vehicle_id(c.getInt(c.getColumnIndex(KEY_VEHICLE_ID)));
                 parking.setActive(c.getInt(c.getColumnIndex(ACTIVE)));
@@ -300,11 +302,10 @@ public class DBOpenHelper extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-
         values.put(KEY_ID, parking.getParking_id());
+        values.put(TIME_OUT, parking.getTime_out());
         values.put(ACTIVE, parking.getActive());
         values.put(CHARGE, parking.getCharge());
-        values.put(TIME_OUT, parking.getTime_out());
 
         // updating row
         return db.update(TABLE_PARKING, values, KEY_ID + " = ?",
