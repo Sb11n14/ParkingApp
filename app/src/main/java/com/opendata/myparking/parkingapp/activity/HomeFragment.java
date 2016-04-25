@@ -46,14 +46,15 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by is chan on 17/04/2016.
@@ -78,9 +79,16 @@ public class HomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         DBOpenHelper db = new DBOpenHelper(getActivity().getApplicationContext());
+        ArrayList<Parking> allParking = db.getAllParkings();
+        for (Parking p: allParking) {
+            Log.d("Parking Results: ","Id= " + p.getParking_id() + " Veh Id= " + p.getKey_vehicle_id() + " Platenum= " + p.getPlateNumber());
+
+        }
+        //Vehicle vById = db.getVehicleById(1);
+        //Log.d("Results vById: ","Id= " + vById.getId() + " Numberplate= " + vById.getPlateNumber() + " Brand= " + vById.getBrand() + " Model= " + vById.getModel() + " yr= " + vById.getYearManufactured());
 
         /*
-
+        DBOpenHelper db = new DBOpenHelper(getActivity().getApplicationContext());
         More testing..on dates
         ArrayList<Parking> allParking = db.getAllParkings();
         for (Parking p: allParking) {
@@ -244,7 +252,7 @@ public class HomeFragment extends Fragment {
                                             // Convert processing time to seconds and trim to two decimal places
                                             + " Processing time: " + String.format("%.2f", ((results.getProcessing_time_ms() / 1000.0) % 60)) + " seconds");
 
-                                    String plate_number = results.getResults().get(0).getPlate(); // "ABCx1234"
+                                    String plate_number = "ABCx1234"; // results.getResults().get(0).getPlate()
                                     if (db.isVehicleExist(plate_number)){
                                         //yes .. exist.
                                         Log.d("Messageeesss","1");
@@ -253,11 +261,14 @@ public class HomeFragment extends Fragment {
                                             //yes.. vehicle is parked
                                             Log.d("Messageeesss","2");
                                             Parking aParking = db.getParkingByVehicleId(aVehicle.getId()); // get current parking record for this vehicle.
+
                                             Date tOut = new Date();
-                                            Date tIn = new Date();//stringToDate(aParking.getTime_in());
-                                            long diffTimes = tOut.getTime() -  tIn.getTime(); // converting to date is problematic. still have to work on this for final calc.
+                                            Date tIn = stringToDate(aParking.getTime_in());
+                                            long duration = tOut.getTime() - tIn.getTime();
+                                            long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(duration);
                                             aParking.setTime_out(dateToString(tOut,"yyyy-MM-dd HH:mm:ss"));
-                                            aParking.setCharge(100 * aLocation.getCost()); // set charge.
+                                            Log.d("Messageeesss","2:::" + tOut);
+                                            aParking.setCharge(diffInMinutes * aLocation.getCost()); // set charge.
                                             aParking.setActive(0); // 0 is inactive
                                             db.updateParking(aParking);
 
@@ -265,6 +276,7 @@ public class HomeFragment extends Fragment {
                                             //no.. vehicle is not parked.
                                             Log.d("Messageeesss","3");
                                             Date tIn = new Date();
+                                            Log.d("Messageeesss","3:::" + tIn);
                                             Parking p = new Parking(aVehicle.getId(),aLocation.getLocation_id(),dateToString(tIn,"yyyy-MM-dd HH:mm:ss"));
                                             db.createParking(p);
                                         }
@@ -340,18 +352,29 @@ public class HomeFragment extends Fragment {
 
     //This works
     private String dateToString(Date date, String format) {
-        SimpleDateFormat df = new SimpleDateFormat(format, Locale.getDefault());
-
-        return df.format(date);
-    }
-    private Date stringToDate(String dataString){
-        java.util.Date d = null;
-        try{
-             d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dataString);
-        }catch(ParseException ex){
-            ex.printStackTrace();
+        if (date != null && format != null){
+            SimpleDateFormat df = new SimpleDateFormat(format);
+            return df.format(date);
+        }else{
+            return null;
         }
-        return d;
+
+    }
+    private Date stringToDate(String dateString){
+        Date date = new Date();
+
+        if (dateString != null){
+            try{
+                DateFormat formatter;
+                formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                date = (Date)formatter.parse(dateString);
+            }catch(ParseException ex){
+                ex.printStackTrace();
+            }
+
+        }
+
+        return date;
     }
 
     @Override

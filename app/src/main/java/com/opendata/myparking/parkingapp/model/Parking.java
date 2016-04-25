@@ -14,6 +14,8 @@ public class Parking {
     private int active; //1 for true active, otherwise 0
     private Double charge;
 
+    private  String plateNumber;
+
     public Parking (){
 
     }
@@ -82,6 +84,17 @@ public class Parking {
 
         return this.charge;
 
+    }
+    public String getPlateNumber() {
+        return plateNumber;
+    }
+
+    public void setPlateNumber(String plateNumber) {
+        this.plateNumber = plateNumber;
+    }
+
+    public void setParking_id(long parking_id) {
+        this.parking_id = parking_id;
     }
 
     public int getActive(){

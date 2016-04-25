@@ -37,6 +37,7 @@ public class ParkingsFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_parkings, container, false);
 
         db = new DBOpenHelper(getActivity().getApplicationContext());
+
         listParkings = db.getAllParkings();
 
         adapterparking = new ParkingsAdapter(getContext(), listParkings);

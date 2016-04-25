@@ -25,7 +25,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
 
     //Constants for db name and version
     private static final String DATABASE_NAME = "parking.db";
-    private static final int DATABASE_VERSION = 5; //incremented
+    private static final int DATABASE_VERSION = 6; //incremented
 
 
     //Constants for identifying table & column
@@ -268,8 +268,13 @@ public class DBOpenHelper extends SQLiteOpenHelper{
      * */
     public ArrayList<Parking> getAllParkings() {
         ArrayList<Parking> parkingList = new ArrayList<Parking>();
-        String selectQuery = "SELECT  * FROM " + TABLE_PARKING;
+        String selectQuery = "SELECT  * FROM " + TABLE_PARKING + " INNER JOIN " + TABLE_VEHICLE + " ON "
+                                + TABLE_PARKING + "." + KEY_VEHICLE_ID + " = " + TABLE_VEHICLE + "." + KEY_ID;
 
+        /*
+        * SELECT EMP_ID, NAME, DEPT FROM COMPANY INNER JOIN DEPARTMENT
+      ON COMPANY.ID = DEPARTMENT.EMP_ID;
+        * */
         Log.e(LOG, selectQuery);
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -286,6 +291,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
                 parking.setKey_vehicle_id(c.getInt(c.getColumnIndex(KEY_VEHICLE_ID)));
                 parking.setActive(c.getInt(c.getColumnIndex(ACTIVE)));
                 parking.setCharge(c.getDouble(c.getColumnIndex(CHARGE))); // added charge
+                parking.setPlateNumber(c.getString(c.getColumnIndex(PLATE_NUMBER)));
 
                 // adding to parking list
                 parkingList.add(parking);
