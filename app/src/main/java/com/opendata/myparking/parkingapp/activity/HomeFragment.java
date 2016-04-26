@@ -79,16 +79,19 @@ public class HomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+        //Vehicle vById = db.getVehicleById(1);
+        //Log.d("Results vById: ","Id= " + vById.getId() + " Numberplate= " + vById.getPlateNumber() + " Brand= " + vById.getBrand() + " Model= " + vById.getModel() + " yr= " + vById.getYearManufactured());
+
+        /*
+
         DBOpenHelper db = new DBOpenHelper(getActivity().getApplicationContext());
         ArrayList<Parking> allParking = db.getAllParkings();
         for (Parking p: allParking) {
             Log.d("Parking Results: ","Id= " + p.getParking_id() + " Veh Id= " + p.getKey_vehicle_id() + " Platenum= " + p.getPlateNumber());
 
         }
-        //Vehicle vById = db.getVehicleById(1);
-        //Log.d("Results vById: ","Id= " + vById.getId() + " Numberplate= " + vById.getPlateNumber() + " Brand= " + vById.getBrand() + " Model= " + vById.getModel() + " yr= " + vById.getYearManufactured());
 
-        /*
         DBOpenHelper db = new DBOpenHelper(getActivity().getApplicationContext());
         More testing..on dates
         ArrayList<Parking> allParking = db.getAllParkings();
@@ -186,14 +189,14 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        resultTextView.setText("OPEN PARKING. \r\n Press the red button to scan plate number.");
+        resultTextView.setText("Welcome. \r\n Press the red button to scan plate number.");
         FloatingActionButton reset = (FloatingActionButton)rootView.findViewById(R.id.clearButton);
         reset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //v.findViewWithTag(imageView);
                 imageView.setImageResource(android.R.color.transparent);
-                resultTextView.setText("");
+                resultTextView.setText("Welcome. \r\n Press the red button to scan plate number.");
             }
         });
 
