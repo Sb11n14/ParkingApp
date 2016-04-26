@@ -13,7 +13,7 @@
     <color name="list_divider">#666666</color>
 
     <color name="red_progress">#FF5722</color>
-    <color name="yellow_progress">#FFEB3B</color>
+    <color name="yellow_progress">#ffeb3b</color>
     <color name="green_progress">#8BC34A</color>
 
     <color name="colorPrimary">#00695C</color>
