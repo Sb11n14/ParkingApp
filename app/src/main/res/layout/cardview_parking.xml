@@ -19,6 +19,23 @@
         android:text="Time in: 07/04/2016 17:06"
         android:textColor="@color/color_hint"
         android:textSize="@dimen/body"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/time_out"
+        android:text="Time out: 07/04/2016 17:06"
+        android:textColor="@color/color_hint"
+        android:textSize="@dimen/body"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/charge"
+        android:text="@string/lbl_charge"
+        android:textColor="@color/color_hint"
+        android:textSize="@dimen/body"
+        android:hint="@string/hint_cost"/>
     <!-- comment for the moment as we cant find the vehicle from the platenumber -->
     <!--<TextView
         android:layout_width="wrap_content"

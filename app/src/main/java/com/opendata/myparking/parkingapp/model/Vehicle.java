@@ -1,14 +1,5 @@
 package com.opendata.myparking.parkingapp.model;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-
-import com.opendata.myparking.parkingapp.database.DBOpenHelper;
-
-import java.sql.Array;
-import java.util.ArrayList;
-
 /**
  * Created by is chan on 17/04/2016.
  */
@@ -17,7 +8,7 @@ public class Vehicle {
     String vehicle_plate_number;
     String brand;
     String model;
-    String yearManufactured;
+    String yearManufactured; // changed to date.
     String color;
 
 
@@ -26,7 +17,7 @@ public class Vehicle {
 
     }
 
-    public Vehicle(String vehicle_plate_number) {
+    public Vehicle(String plate_number) {
         this.vehicle_plate_number = vehicle_plate_number;
     }
 

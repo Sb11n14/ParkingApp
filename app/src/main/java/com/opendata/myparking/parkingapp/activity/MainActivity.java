@@ -1,49 +1,23 @@
 package com.opendata.myparking.parkingapp.activity;
 
-import android.Manifest;
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.opendata.myparking.parkingapp.R;
 import com.squareup.picasso.Picasso;
 
-import org.openalpr.OpenALPR;
-import org.openalpr.model.Results;
-import org.openalpr.model.ResultsError;
-
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * This class is based Sandro's OpenALPR then modified by Group Open Data Innovation
@@ -254,6 +228,19 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     @Override
     public void onDrawerItemSelected(View view, int position) {
         displayView(position);
+    }
+
+    public void signIn (MenuItem item){
+
+        Intent intent = new Intent( this, LoginActivity.class);
+        this.startActivity(intent);
+
+    }
+    public void Register(MenuItem item){
+
+        Intent intent = new Intent( this, RegisterActivity.class);
+        this.startActivity(intent);
+
     }
 
     private void displayView(int position) {

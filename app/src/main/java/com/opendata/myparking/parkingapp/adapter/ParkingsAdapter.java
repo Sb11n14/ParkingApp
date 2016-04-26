@@ -1,8 +1,6 @@
 package com.opendata.myparking.parkingapp.adapter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,11 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.opendata.myparking.parkingapp.R;
-import com.opendata.myparking.parkingapp.activity.MainActivity;
-import com.opendata.myparking.parkingapp.database.DBOpenHelper;
-import com.opendata.myparking.parkingapp.model.Location;
 import com.opendata.myparking.parkingapp.model.Parking;
-import com.opendata.myparking.parkingapp.model.Vehicle;
 
 import java.util.ArrayList;
 
@@ -24,7 +18,7 @@ import java.util.ArrayList;
  */
 public class ParkingsAdapter extends ArrayAdapter<Parking> {
     private ArrayList<Parking> parkingArrayList;
-    private DBOpenHelper db;
+    //private DBOpenHelper db;
 
     public ParkingsAdapter (Context context, ArrayList<Parking> parkingArrayList){
         super(context, R.layout.cardview_parking, parkingArrayList);
@@ -47,6 +41,8 @@ public class ParkingsAdapter extends ArrayAdapter<Parking> {
 
         viewHolder.plateNumber = (TextView)itemView.findViewById(R.id.plate_number);
         viewHolder.timeIn = (TextView)itemView.findViewById(R.id.time_in);
+        viewHolder.timeOut = (TextView)itemView.findViewById(R.id.time_out);
+        viewHolder.charge = (TextView)itemView.findViewById(R.id.charge);
         // comment for the moment as we cant find the vehicle from the platenumber
         /*viewHolder.brand = (TextView)itemView.findViewById(R.id.brand);
         viewHolder.model = (TextView)itemView.findViewById(R.id.model);
@@ -56,9 +52,10 @@ public class ParkingsAdapter extends ArrayAdapter<Parking> {
 
 
         //using data from database
-        final String plate_number = parkingArrayList.get(position).getKey_vehicle_id();
+        final String plateNum = parkingArrayList.get(position).getPlateNumber(); // UPDATED to check for vehicle Id. Plate number was here.
         final String timein = parkingArrayList.get(position).getTime_in();
-        Log.d("Vehicle on parking", plate_number);
+        final String timeout = parkingArrayList.get(position).getTime_out();
+        final Double charge = parkingArrayList.get(position).getCharge();
         //Vehicle vce = db.getVehicle(plate_number);
         //Location loc = db.getLocation(parkingArrayList.get(position).getKey_location_id());
 
@@ -71,8 +68,10 @@ public class ParkingsAdapter extends ArrayAdapter<Parking> {
         final String colour = vce.getColor();*/
         //
 
-        viewHolder.plateNumber.setText(plate_number);
-        viewHolder.timeIn.setText(timein);
+        viewHolder.plateNumber.setText(plateNum); // Updated to vehicleId .. Plate number was here. String.valueOf(vehId)
+        viewHolder.timeIn.setText("Time in: " +timein);
+        viewHolder.timeOut.setText("Time out: " +timeout);
+        viewHolder.charge.setText("Charge: " + String.valueOf(charge));
         // comment for the moment as we cant find the vehicle from the platenumber
         /*viewHolder.brand.setText("Brand: " + brand);
         viewHolder.model.setText("Model: " + model);
@@ -103,7 +102,8 @@ public class ParkingsAdapter extends ArrayAdapter<Parking> {
     private class ViewHolder {
         protected TextView plateNumber;
         protected TextView timeIn;
-        protected TextView brand;
+        protected TextView timeOut;
+        protected TextView charge;
         protected TextView model;
         protected TextView colour;
         protected TextView year;

@@ -66,16 +66,16 @@ public class CreateParkingActivity extends ActionBarActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                db = new DBOpenHelper(getApplicationContext());
-                //long vehicle = Long.parseLong(inputKeyVehicleId.getText().toString().trim());
-                String vehicle = inputKeyVehicleId.getText().toString().trim();
+                /*db = new DBOpenHelper(getApplicationContext());
+                long vehicle = Long.parseLong(inputKeyVehicleId.getText().toString().trim());
+                //String vehicle = inputKeyVehicleId.getText().toString().trim();
                 long location = Long.parseLong(inputKeyLocationId.getText().toString().trim());
                 String timeIn = inputTimeIn.getText().toString().trim();
                 String timeOut = inputTimeOut.getText().toString().trim();
                 int active = Integer.parseInt(inputActive.getText().toString().trim());
                 inputParking(vehicle, location, timeIn, timeOut, active);
                 db.closeDB();
-                onBackPressed();
+                onBackPressed();*/
             }
         });
     }
@@ -106,7 +106,7 @@ public class CreateParkingActivity extends ActionBarActivity {
     }
 
     // used for UI test, may need to be modify
-    private void inputParking(String vehicleId, long locationId, String timeIn, String timeOut, int active) {
+    /*private void inputParking(Long vehicleId, long locationId, String timeIn, String timeOut, int active) {
 
         parking = new Parking();
         parking.setKey_vehicle_id(vehicleId);
@@ -119,7 +119,7 @@ public class CreateParkingActivity extends ActionBarActivity {
 
         Toast.makeText(getApplicationContext(), "The parking is submitted.", Toast.LENGTH_SHORT).show();
 
-    }
+    }*/
 
 
 

@@ -43,7 +43,7 @@ public class LocationsAdapter extends ArrayAdapter<Location> {
         viewHolder.cost = (TextView)itemView.findViewById(R.id.cost);
 
         final String location_name = locationArrayList.get(position).getLocation_name();
-        final int cost = locationArrayList.get(position).getCost();
+        final Double cost = locationArrayList.get(position).getCost();
 
         viewHolder.location.setText("Name :" + location_name);
         viewHolder.cost.setText("Cost/min : " + cost);
