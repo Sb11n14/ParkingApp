@@ -2,7 +2,7 @@
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
+    android:background="@color/background_floating_material_dark">
 
 <!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -26,7 +26,8 @@
             android:layout_height="wrap_content"
             android:freezesText="true"
             android:textSize="20sp"
-            android:gravity="center_horizontal" />
+            android:gravity="center_horizontal"
+            android:textColor="@color/white_default" />
 
         <!--<Button
             android:id="@+id/button"
@@ -35,17 +36,28 @@
             android:text="Take Picture"/>-->
     </LinearLayout>
 
-
-<!--
+    <!--
 </LinearLayout>-->
+
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/fabButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
+        android:layout_width="84dp"
+        android:layout_height="88dp"
+        android:layout_gravity="left|bottom"
         android:layout_marginBottom="8dp"
         android:layout_marginRight="8dp"
         android:src="@drawable/camera"
         fab:fab_colorNormal="@color/red_default"
+        fab:fab_colorPressed="@color/colorAccent"/>
+
+    <com.github.clans.fab.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reset"
+        android:id="@+id/clearButton"
+        android:src="@drawable/clear"
+        android:layout_gravity="right|bottom"
+        fab:fab_colorNormal="@color/colorAccent"
         fab:fab_colorPressed="@color/red_default"/>
-    </FrameLayout>
+
+</FrameLayout>

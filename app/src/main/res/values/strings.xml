@@ -25,6 +25,7 @@
     <string name="title_parkings">Parkings</string>
     <string name="title_home">Home</string>
     <string name="title_user_profile">My profile</string>
+    <string name="lbl_charge">Charge</string>
 
     <string name="hint_location">Location Name</string>
     <string name="hint_cost">Cost per minute</string>

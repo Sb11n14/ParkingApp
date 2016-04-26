@@ -67,6 +67,7 @@ public class HomeFragment extends Fragment {
     private TextView resultTextView;
     private ImageView imageView;
     private FloatingActionButton fabButton;
+    private FloatingActionButton clearButton;
     //private String plate_number;
     //private DBOpenHelper db;
 
@@ -185,7 +186,16 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        resultTextView.setText("Welcome! Press the red button below to scan your plae number.");
+        resultTextView.setText("OPEN PARKING. \r\n Press the red button to scan plate number.");
+        FloatingActionButton reset = (FloatingActionButton)rootView.findViewById(R.id.clearButton);
+        reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //v.findViewWithTag(imageView);
+                imageView.setImageResource(android.R.color.transparent);
+                resultTextView.setText("");
+            }
+        });
 
         /**
          * For testing only
@@ -246,11 +256,16 @@ public class HomeFragment extends Fragment {
                                     DBOpenHelper db = new DBOpenHelper(getActivity().getApplicationContext());
                                     Location aLocation = db.createDefaultLocation(); // Creates a default locaton with value.
 
-                                    resultTextView.setText("Plate: " + results.getResults().get(0).getPlate()
+                                    resultTextView.setText("Plate Number: " + results.getResults().get(0).getPlate() + "."
+                                            + "\r\n Accuracy: "  + String.format("%.2f", results.getResults().get(0).getConfidence()) + "%");
+
+                                    /*
+                                    *       resultTextView.setText("Plate Number: " + results.getResults().get(0).getPlate()
                                             // Trim confidence to two decimal places
                                             + " Confidence: " + String.format("%.2f", results.getResults().get(0).getConfidence()) + "%"
                                             // Convert processing time to seconds and trim to two decimal places
                                             + " Processing time: " + String.format("%.2f", ((results.getProcessing_time_ms() / 1000.0) % 60)) + " seconds");
+                                    * */
 
                                     String plate_number = "ABCx1234"; // results.getResults().get(0).getPlate()
                                     if (db.isVehicleExist(plate_number)){

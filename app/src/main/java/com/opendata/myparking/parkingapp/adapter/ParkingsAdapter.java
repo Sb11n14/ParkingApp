@@ -41,6 +41,8 @@ public class ParkingsAdapter extends ArrayAdapter<Parking> {
 
         viewHolder.plateNumber = (TextView)itemView.findViewById(R.id.plate_number);
         viewHolder.timeIn = (TextView)itemView.findViewById(R.id.time_in);
+        viewHolder.timeOut = (TextView)itemView.findViewById(R.id.time_out);
+        viewHolder.charge = (TextView)itemView.findViewById(R.id.charge);
         // comment for the moment as we cant find the vehicle from the platenumber
         /*viewHolder.brand = (TextView)itemView.findViewById(R.id.brand);
         viewHolder.model = (TextView)itemView.findViewById(R.id.model);
@@ -52,6 +54,8 @@ public class ParkingsAdapter extends ArrayAdapter<Parking> {
         //using data from database
         final String plateNum = parkingArrayList.get(position).getPlateNumber(); // UPDATED to check for vehicle Id. Plate number was here.
         final String timein = parkingArrayList.get(position).getTime_in();
+        final String timeout = parkingArrayList.get(position).getTime_out();
+        final Double charge = parkingArrayList.get(position).getCharge();
         //Vehicle vce = db.getVehicle(plate_number);
         //Location loc = db.getLocation(parkingArrayList.get(position).getKey_location_id());
 
@@ -66,6 +70,8 @@ public class ParkingsAdapter extends ArrayAdapter<Parking> {
 
         viewHolder.plateNumber.setText(plateNum); // Updated to vehicleId .. Plate number was here. String.valueOf(vehId)
         viewHolder.timeIn.setText(timein);
+        viewHolder.timeOut.setText(timeout);
+        viewHolder.charge.setText(String.valueOf(charge));
         // comment for the moment as we cant find the vehicle from the platenumber
         /*viewHolder.brand.setText("Brand: " + brand);
         viewHolder.model.setText("Model: " + model);
@@ -96,7 +102,8 @@ public class ParkingsAdapter extends ArrayAdapter<Parking> {
     private class ViewHolder {
         protected TextView plateNumber;
         protected TextView timeIn;
-        protected TextView brand;
+        protected TextView timeOut;
+        protected TextView charge;
         protected TextView model;
         protected TextView colour;
         protected TextView year;
