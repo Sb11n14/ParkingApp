@@ -6,6 +6,7 @@ package com.opendata.myparking.parkingapp.model;
 public class User {
     private long userId;
     private String username;
+    private String password;
     private String first_name;
     private String last_name;
     private String plate_number;
@@ -14,12 +15,13 @@ public class User {
     public User(){
 
     }
-    public User(String first_name, String last_name, Double balance, String plate_number, String username){
+    public User(String first_name, String last_name, Double balance, String plate_number, String username, String password){
         this.first_name = first_name;
         this.username = username;
         this.last_name = last_name;
         this.balance = balance;
         this.plate_number = plate_number;
+        this.password = password;
 
     }
     public long getUserId() {
@@ -28,6 +30,13 @@ public class User {
 
     public void setUserId(long userId) {
         this.userId = userId;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
     }
     public String getUsername() {
         return username;

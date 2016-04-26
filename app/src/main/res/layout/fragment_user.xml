@@ -24,6 +24,17 @@
             android:layout_height="match_parent"
             android:padding="16dp"
             android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/username_title"
+                android:paddingTop="16dp"
+                android:paddingBottom="4dp"
+                android:textSize="@dimen/caption"
+                android:textColor="@color/color_hint"
+                android:text="Username" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -88,25 +99,7 @@
                 android:textSize="@dimen/subhead"
                 android:textColor="@color/black_default"
                 />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/error_balance_title"
-                android:paddingTop="8dp"
-                android:paddingBottom="4dp"
-                android:textSize="@dimen/caption"
-                android:textColor="@color/color_hint"
-                android:text="Error Balance"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/error_balance"
-                android:paddingTop="4dp"
-                android:paddingBottom="8dp"
-                android:textSize="@dimen/subhead"
-                android:textColor="@color/black_default"
-                />
+
         </LinearLayout>
 
 

@@ -24,8 +24,8 @@ public class DBOpenHelper extends SQLiteOpenHelper{
     private static final String LOG = "DBOpenHelper";
 
     //Constants for db name and version
-    private static final String DATABASE_NAME = "parking.db";
-    private static final int DATABASE_VERSION = 6; //incremented
+    private static final String DATABASE_NAME = "openparking.db";
+    private static final int DATABASE_VERSION = 3; //incremented
 
 
     //Constants for identifying table & column
@@ -69,6 +69,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
     public static final String LAST_NAME = "last_name";
     public static final String BALANCE = "balance";
     public static final String USERNAME = "username";
+    public static final String PASSWORD = "password";
 
     public static final String [] ALL_COLUMNS_PARKING =
             {KEY_ID, TIME_IN, TIME_OUT, ACTIVE, KEY_LOCATION_ID, KEY_VEHICLE_ID, CHARGE};
@@ -80,7 +81,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
             {KEY_ID, PLATE_NUMBER, BRAND, MODEL, YEAR_MANUFACTURED, COLOR};
 
     public static final String [] ALL_COLUMNS_USER =
-            {KEY_ID, FIRST_NAME, LAST_NAME, BALANCE, PLATE_NUMBER};
+            {KEY_ID, FIRST_NAME, LAST_NAME, BALANCE, PLATE_NUMBER,PASSWORD,USERNAME};
 
 
     // parking table create statement
@@ -124,8 +125,9 @@ public class DBOpenHelper extends SQLiteOpenHelper{
                     FIRST_NAME + " TEXT, " +
                     LAST_NAME + " TEXT, " +
                     BALANCE + " DECIMAL, " +
-                    PLATE_NUMBER + " TEXT " +
-                    USERNAME + " TEXT " +
+                    PLATE_NUMBER + " TEXT, " +
+                    USERNAME + " TEXT, " +
+                    PASSWORD + " TEXT " +
                     ");";
 
     public DBOpenHelper(Context context) {
@@ -512,19 +514,35 @@ public class DBOpenHelper extends SQLiteOpenHelper{
         values.put(PLATE_NUMBER, user.getPlate_number());
         values.put(USERNAME, user.getUsername());
         values.put(BALANCE, user.getBalance());
+        values.put(PASSWORD, user.getPassword());
 
         // insert row
         long user_id = db.insert(TABLE_USER, null, values);
 
         return user_id;
     }
+    public boolean matchUsernameAndPassword (String username, String password){
 
+        String count = "SELECT * FROM " + TABLE_USER +
+                        " WHERE " + USERNAME + " = \"" + username + "\""+
+                        " AND " + PASSWORD + " = \"" + password + "\"";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(count, null);
+        int vCount = c.getCount();
+        c.close();
+        if (vCount > 0)
+            return  true;
+        else
+            return false;
+    }
     //Getting a User
-    public User getUserByUsername(String username){
+    public User getUserByUsernameAndPassword(String username, String password){
 
         SQLiteDatabase db = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM " + TABLE_USER +
-                                " WHERE " + USERNAME + " = \"" + username + "\"";
+                                " WHERE " + USERNAME + " = \"" + username + "\""+
+                                " AND " + PASSWORD + " = \"" + password + "\"";
         Log.e(LOG, selectQuery);
 
         Cursor c = db.rawQuery(selectQuery, null);
@@ -539,6 +557,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
         user.setBalance(c.getDouble(c.getColumnIndex(BALANCE)));
         user.setUsername(c.getString(c.getColumnIndex(USERNAME)));
         user.setPlate_number(c.getString(c.getColumnIndex(PLATE_NUMBER)));
+        user.setPassword(c.getString(c.getColumnIndex(PASSWORD)));
         //c.close();
         return user;
     }
@@ -565,7 +584,6 @@ public class DBOpenHelper extends SQLiteOpenHelper{
         //c.close();
         return user;
     }
-
     /**
      * Getting all User
      * */

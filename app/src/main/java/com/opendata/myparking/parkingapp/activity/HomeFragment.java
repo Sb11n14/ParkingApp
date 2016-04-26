@@ -80,6 +80,7 @@ public class HomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
 
+        DBOpenHelper db = new DBOpenHelper(getActivity().getApplicationContext());
         //Vehicle vById = db.getVehicleById(1);
         //Log.d("Results vById: ","Id= " + vById.getId() + " Numberplate= " + vById.getPlateNumber() + " Brand= " + vById.getBrand() + " Model= " + vById.getModel() + " yr= " + vById.getYearManufactured());
 

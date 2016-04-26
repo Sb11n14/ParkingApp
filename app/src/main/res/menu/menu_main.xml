@@ -11,16 +11,9 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_login"
-        android:title="Login"
-        android:orderInCategory="100"
-        app:showAsAction="never"
-        android:onClick="signIn"
-        />
-
-    <item
         android:id="@+id/action_settings"
-        android:title="@string/action_settings"
+        android:title="@string/action_register"
         android:orderInCategory="100"
+        android:onClick="Register"
         app:showAsAction="never" />
 </menu>

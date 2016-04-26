@@ -69,9 +69,9 @@ public class ParkingsAdapter extends ArrayAdapter<Parking> {
         //
 
         viewHolder.plateNumber.setText(plateNum); // Updated to vehicleId .. Plate number was here. String.valueOf(vehId)
-        viewHolder.timeIn.setText(timein);
-        viewHolder.timeOut.setText(timeout);
-        viewHolder.charge.setText(String.valueOf(charge));
+        viewHolder.timeIn.setText("Time in: " +timein);
+        viewHolder.timeOut.setText("Time out: " +timeout);
+        viewHolder.charge.setText("Charge: " + String.valueOf(charge));
         // comment for the moment as we cant find the vehicle from the platenumber
         /*viewHolder.brand.setText("Brand: " + brand);
         viewHolder.model.setText("Model: " + model);
