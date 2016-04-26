@@ -49,6 +49,7 @@ public class LocationsFragment extends Fragment {
     private EditText inputCost;
     private Button btnSubmit;
     private FloatingActionButton fabButton;
+    private FloatingActionButton fabButtonEdit;
     private int intIndexSelected;
 
 
@@ -79,6 +80,10 @@ public class LocationsFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+
+
+
 
         //Build access to database
         db = new DBOpenHelper(getActivity().getApplicationContext());
@@ -119,7 +124,12 @@ public class LocationsFragment extends Fragment {
             // Code to execute when clicked on This Item
         } else if (item.getTitle() == "Update") {
 
-            // Code to execute when clicked on This Item                                                        }  
+            // Code to execute when clicked on This Item
+            //
+
+            Intent intent = new Intent(LocationsFragment.this.getActivity(), EditLocationActivity.class);
+            startActivity(intent);
+
 
 
         }

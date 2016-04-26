@@ -1,5 +1,6 @@
 package com.opendata.myparking.parkingapp.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.github.clans.fab.FloatingActionButton;
 import com.opendata.myparking.parkingapp.R;
 import com.opendata.myparking.parkingapp.adapter.ParkingsAdapter;
 import com.opendata.myparking.parkingapp.database.DBOpenHelper;
@@ -29,6 +31,8 @@ public class ParkingsFragment extends Fragment {
     private DBOpenHelper db;
     private int intIndexSelected;
 
+    private FloatingActionButton fabButton;
+
     public ParkingsFragment(){}
 
     @Override
@@ -36,6 +40,22 @@ public class ParkingsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_parkings, container, false);
+
+        // create a new parking
+        fabButton = (FloatingActionButton) rootView.findViewById(R.id.fabButton);
+
+        fabButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                /*String location = inputLocation.getText().toString().trim();
+                int cost = Integer.parseInt(inputCost.getText().toString().trim());
+                inputLocation(location, cost);*/
+
+                Intent intent = new Intent(ParkingsFragment.this.getActivity(), CreateParkingActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         db = new DBOpenHelper(getActivity().getApplicationContext());
         listParkings = db.getAllParkings();
@@ -48,6 +68,7 @@ public class ParkingsFragment extends Fragment {
         db.closeDB();
 
         registerForContextMenu(listPlateNumbers);
+
 
         return rootView;
     }
@@ -75,7 +96,9 @@ public class ParkingsFragment extends Fragment {
             // Code to execute when clicked on This Item
         } else if (item.getTitle() == "Update") {
 
-            // Code to execute when clicked on This Item                                                        }
+            // Code to execute when clicked on This Item
+            Intent intent = new Intent(ParkingsFragment.this.getActivity(), EditParkingActivity.class);
+            startActivity(intent);
 
 
         }

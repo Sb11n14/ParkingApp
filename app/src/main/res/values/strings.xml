@@ -39,4 +39,13 @@
     <string name="hint_plate_number">Plate Number</string>
     <string name="hint_balance">Balance</string>
     <string name="hint_error_balance">Error Balance</string>
+    <string name="hint_brand">Brand</string>
+    <string name="hint_model">Model</string>
+    <string name="hint_colour">Colour</string>
+    <string name="hint_year">Year</string>
+    <string name="hint_key_vehicle_id">Key Vehicle Id</string>
+    <string name="hint_key_location_id">Key Location Id</string>
+    <string name="hint_time_in">Time in</string>
+    <string name="hint_time_out">Time out</string>
+    <string name="hint_active">Active</string>
 </resources>

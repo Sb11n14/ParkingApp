@@ -1,5 +1,6 @@
 package com.opendata.myparking.parkingapp.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.github.clans.fab.FloatingActionButton;
 import com.opendata.myparking.parkingapp.R;
 import com.opendata.myparking.parkingapp.adapter.VehiclesAdapter;
 import com.opendata.myparking.parkingapp.database.DBOpenHelper;
@@ -28,7 +30,10 @@ public class VehiclesFragment extends Fragment {
     private DBOpenHelper db;
     private int intIndexSelected;
 
+    private FloatingActionButton fabButton;
+
     public VehiclesFragment(){}
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,8 +51,28 @@ public class VehiclesFragment extends Fragment {
 
         registerForContextMenu(listPlateNumbers);
 
+
+        // create a new vehicle
+        fabButton = (FloatingActionButton) rootView.findViewById(R.id.fabButton);
+
+        fabButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*String location = inputLocation.getText().toString().trim();
+                int cost = Integer.parseInt(inputCost.getText().toString().trim());
+                inputLocation(location, cost);*/
+
+                Intent intent = new Intent(VehiclesFragment.this.getActivity(), CreateVehicleActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
+
         return rootView;
     }
+
+
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
@@ -74,6 +99,8 @@ public class VehiclesFragment extends Fragment {
 
             // Code to execute when clicked on This Item                                                        }
 
+            Intent intent = new Intent(VehiclesFragment.this.getActivity(), EditVehicleActivity.class);
+            startActivity(intent);
 
         }
         return true;

@@ -17,11 +17,11 @@ import java.util.ArrayList;
  */
 public class VehiclesAdapter extends ArrayAdapter<Vehicle> {
 
-    private final ArrayList<Vehicle> vehicleArrayList;
+    private ArrayList<Vehicle> vehicleArrayList;
 
     public VehiclesAdapter (Context context, ArrayList<Vehicle> vehicleArrayList){
         super(context, R.layout.cardview_parking, vehicleArrayList);
-        this.vehicleArrayList = vehicleArrayList;
+        this.vehicleArrayList = vehicleArrayList; //comment if wish to test UI
     }
 
     public View getView(int position, View view, ViewGroup parent) {
@@ -48,9 +48,19 @@ public class VehiclesAdapter extends ArrayAdapter<Vehicle> {
         viewHolder.year.setText("Year: " + year);
         viewHolder.colour.setText("Colour: " + colour);
 
+        //for testing UI only
+        /*viewHolder.plateNumber.setText("MT09NKS");
+        viewHolder.brand.setText("Fiat");
+        viewHolder.model.setText("405");
+        viewHolder.year.setText("2010");
+        viewHolder.colour.setText("Blue");*/
+
         return itemView;
     }
 
+    public int getCount(){
+        return vehicleArrayList.size();
+    }
 
     private class ViewHolder {
         protected TextView plateNumber;

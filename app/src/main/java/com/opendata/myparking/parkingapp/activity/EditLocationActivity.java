@@ -1,27 +1,24 @@
 package com.opendata.myparking.parkingapp.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.opendata.myparking.parkingapp.R;
 import com.opendata.myparking.parkingapp.database.DBOpenHelper;
 import com.opendata.myparking.parkingapp.model.Location;
 
 /**
- * Created by is chan on 22/04/2016.
+ * Created by Shamel on 25/04/2016.
  */
-public class CreateLocationActivity extends ActionBarActivity {
+public class EditLocationActivity extends ActionBarActivity {
 
     private TextInputLayout inputLayoutLocation;
     private TextInputLayout inputLayoutCost;
@@ -35,30 +32,31 @@ public class CreateLocationActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_location);
+        setContentView(R.layout.activity_edit_location);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-
         inputLayoutLocation = (TextInputLayout) findViewById(R.id.input_layout_location);
         inputLayoutCost = (TextInputLayout) findViewById(R.id.input_layout_cost);
         inputLocation = (EditText) findViewById(R.id.input_location);
         inputCost = (EditText) findViewById(R.id.input_cost);
         btnSubmit = (Button) findViewById(R.id.btn_submit);
+        btnSubmit = (Button) findViewById(R.id.btn_submit);
 
         if (toolbar != null){
             setSupportActionBar(toolbar);
-            getSupportActionBar().setTitle("Create Location"); //Set Title on Toolbar
+            getSupportActionBar().setTitle("Edit Location"); //Set Title on Toolbar
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        //to be implemented to handle location edit in db
         btnSubmit.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                db = new DBOpenHelper(getApplicationContext());
+                /*db = new DBOpenHelper(getApplicationContext());
                 String location = inputLocation.getText().toString().trim();
                 int cost = Integer.parseInt(inputCost.getText().toString().trim());
-                inputLocation(location, cost);
+                editLocation(location, cost);
                 db.closeDB();
-                onBackPressed();
+                onBackPressed();*/
             }
         });
     }
@@ -88,18 +86,8 @@ public class CreateLocationActivity extends ActionBarActivity {
         }
     }
 
-    /**
-     * Input locatiopn of parking to Database
-     * @param location_name is a location name
-     * @param cost is cost per minute
-     */
-    public void inputLocation(String location_name, int cost){
-        location = new Location();
-        location.setLocation_name(location_name);
-        location.setCost(cost);
-
-        long location_id = db.createLocation(location);
-
-        Toast.makeText(getApplicationContext(), "The location of parking is submitted.", Toast.LENGTH_SHORT).show();
+    // insert code for editing the model object and the database
+    private void editLocation(String location, int cost) {
     }
+
 }
