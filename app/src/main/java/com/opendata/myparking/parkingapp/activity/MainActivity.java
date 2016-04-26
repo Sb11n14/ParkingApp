@@ -256,6 +256,13 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         displayView(position);
     }
 
+    public void signIn (MenuItem item){
+
+        Intent intent = new Intent( this, LoginActivity.class);
+        this.startActivity(intent);
+
+    }
+
     private void displayView(int position) {
         Fragment fragment = null;
         String title = getString(R.string.app_name);
