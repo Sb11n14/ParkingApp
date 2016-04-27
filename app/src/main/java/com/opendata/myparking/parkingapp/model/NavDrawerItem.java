@@ -6,7 +6,7 @@ package com.opendata.myparking.parkingapp.model;
 public class NavDrawerItem {
     private boolean showNotify;
     private String title;
-
+    int icon;
 
     public NavDrawerItem() {
 
@@ -29,7 +29,13 @@ public class NavDrawerItem {
         return title;
     }
 
+    public int getIcon(){
+        return this.icon;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
+
+    public void setIcon(int icon) { this.icon = icon;}
 }
