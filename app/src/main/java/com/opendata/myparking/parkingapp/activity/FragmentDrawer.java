@@ -2,9 +2,13 @@ package com.opendata.myparking.parkingapp.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.opendata.myparking.parkingapp.R;
 import com.opendata.myparking.parkingapp.adapter.NavigationDrawerAdapter;
@@ -41,7 +47,10 @@ public class FragmentDrawer extends Fragment {
     private NavigationDrawerAdapter adapter;
     private View containerView;
     private static String[] titles = null;
+    private static TypedArray icons = null;
     private FragmentDrawerListener drawerListener;
+    private ImageView profile_picture;
+    private RelativeLayout nav_header;
 
     public FragmentDrawer() {
 
@@ -59,8 +68,10 @@ public class FragmentDrawer extends Fragment {
         for (int i = 0; i < titles.length; i++) {
             NavDrawerItem navItem = new NavDrawerItem();
             navItem.setTitle(titles[i]);
+            navItem.setIcon(icons.getResourceId(i, 0));
             data.add(navItem);
         }
+        icons.recycle();
         return data;
     }
 
@@ -70,6 +81,7 @@ public class FragmentDrawer extends Fragment {
 
         // drawer labels
         titles = getActivity().getResources().getStringArray(R.array.nav_drawer_labels);
+        icons = getActivity().getResources().obtainTypedArray(R.array.nav_drawer_icons);
     }
 
     @Override

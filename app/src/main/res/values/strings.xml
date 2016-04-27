@@ -12,6 +12,14 @@
     <string name="nav_item_locations">Locations</string>
     <string name="nav_item_user_profile">User Profile</string>
 
+    <array name="nav_drawer_icons">
+        <item>@drawable/ic_home_black_48dp</item>
+        <item>@drawable/ic_local_parking_black_48dp</item>
+        <item>@drawable/ic_directions_car_black_48dp</item>
+        <item>@drawable/ic_place_black_48dp</item>
+        <item>@drawable/ic_account_circle_black_48dp</item>
+    </array>
+
     <!-- navigation drawer item labels  -->
     <string-array name="nav_drawer_labels">
         <item>@string/nav_item_home</item>
