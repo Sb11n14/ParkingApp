@@ -289,6 +289,7 @@ public class HomeFragment extends Fragment {
                                             long diffInMinutes = TimeUnit.MILLISECONDS.toSeconds(duration);
                                             aParking.setTime_out(dateToString(tOut,"yyyy-MM-dd HH:mm:ss"));
                                             Log.d("Messageeesss","2:::" + tOut);
+
                                             Double cst = diffInMinutes * aLocation.getCost();
                                             aParking.setCharge(cst); // set charge.
                                             aParking.setActive(0); // 0 is inactive
@@ -304,7 +305,6 @@ public class HomeFragment extends Fragment {
                                                 db.updateUserBalance(aUser);
 
                                             }
-
 
                                         }else{
                                             //no.. vehicle is not parked.
@@ -428,19 +428,6 @@ public class HomeFragment extends Fragment {
             Picasso.with(getActivity()).load(destination).fit().centerCrop().into(imageView);
         }
     }
-    public boolean isInternetWorking() {
-        boolean success = false;
-        try {
-            URL url = new URL("https://google.com");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setConnectTimeout(10000);
-            connection.connect();
-            success = connection.getResponseCode() == 200;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return success;
-    }
     public class JSONTask extends AsyncTask<String,String,Vehicle> {
 
         @Override
@@ -464,7 +451,7 @@ public class HomeFragment extends Fragment {
                 NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 
                 URL url = new URL(params[0]);
-                String plate_number = params[1];
+                String plate_number = params[1].toLowerCase();
 
                 if (activeNetworkInfo != null){
                     connection = (HttpURLConnection) url.openConnection();
