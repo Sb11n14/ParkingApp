@@ -34,6 +34,8 @@
         android:layout_marginRight="8dp"
         android:src="@drawable/ic_add"
         fab:fab_colorNormal="@color/red_default"
-        fab:fab_colorPressed="@color/red_default"/>
+        fab:fab_colorPressed="@color/red_default"
+        android:clickable="false"
+        android:visibility="invisible" />
 
 </FrameLayout>

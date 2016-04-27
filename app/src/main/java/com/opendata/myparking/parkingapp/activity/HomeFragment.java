@@ -271,7 +271,7 @@ public class HomeFragment extends Fragment {
                                             + " Processing time: " + String.format("%.2f", ((results.getProcessing_time_ms() / 1000.0) % 60)) + " seconds");
                                     * */
 
-                                    String plate_number = "ABCx1234"; // results.getResults().get(0).getPlate()
+                                    String plate_number = results.getResults().get(0).getPlate(); //  "ABCx1234";
                                     if (db.isVehicleExist(plate_number)){
                                         //yes .. exist.
                                         Log.d("Messageeesss","1");
@@ -524,7 +524,7 @@ public class HomeFragment extends Fragment {
             if(result != null) {
                 Log.d("Hey","yo");
             } else {
-                Toast.makeText(getActivity().getApplicationContext(), "The plate number is not recognised (B).", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getApplicationContext(), "A similar matching plate was found. Please try again.", Toast.LENGTH_SHORT).show();
             }
 
         }
