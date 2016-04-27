@@ -3,9 +3,12 @@ package com.opendata.myparking.parkingapp.activity;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -79,9 +82,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-        DBOpenHelper db = new DBOpenHelper(getActivity().getApplicationContext());
         //Vehicle vById = db.getVehicleById(1);
         //Log.d("Results vById: ","Id= " + vById.getId() + " Numberplate= " + vById.getPlateNumber() + " Brand= " + vById.getBrand() + " Model= " + vById.getModel() + " yr= " + vById.getYearManufactured());
 
@@ -273,7 +273,7 @@ public class HomeFragment extends Fragment {
                                             + " Processing time: " + String.format("%.2f", ((results.getProcessing_time_ms() / 1000.0) % 60)) + " seconds");
                                     * */
 
-                                    String plate_number = results.getResults().get(0).getPlate(); //"ABCx1234";
+                                    String plate_number = results.getResults().get(0).getPlate().toLowerCase(); //"ABCx1234";
                                     if (db.isVehicleExist(plate_number)){
                                         //yes .. exist.
                                         Log.d("Messageeesss","1");
@@ -428,7 +428,19 @@ public class HomeFragment extends Fragment {
             Picasso.with(getActivity()).load(destination).fit().centerCrop().into(imageView);
         }
     }
-
+    public boolean isInternetWorking() {
+        boolean success = false;
+        try {
+            URL url = new URL("https://google.com");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(10000);
+            connection.connect();
+            success = connection.getResponseCode() == 200;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return success;
+    }
     public class JSONTask extends AsyncTask<String,String,Vehicle> {
 
         @Override
@@ -439,7 +451,7 @@ public class HomeFragment extends Fragment {
 
         @Override
         protected Vehicle doInBackground(String... params) {
-
+            boolean success = false;
             HttpURLConnection connection = null;
             BufferedReader reader = null;
             Vehicle vehicle = new Vehicle();
@@ -447,51 +459,71 @@ public class HomeFragment extends Fragment {
 
             try {
 
+                ConnectivityManager connectivityManager
+                        = (ConnectivityManager) getActivity().getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
                 URL url = new URL(params[0]);
                 String plate_number = params[1];
 
-                connection = (HttpURLConnection) url.openConnection();
-                connection.connect();
+                if (activeNetworkInfo != null){
+                    connection = (HttpURLConnection) url.openConnection();
+                    connection.setConnectTimeout(10000);
+                    connection.connect();
 
-                InputStream stream = connection.getInputStream();
-                reader = new BufferedReader(new InputStreamReader(stream));
+                    success = connection.getResponseCode() == 200;
+                    if (success){
+                        InputStream stream = connection.getInputStream();
+                        reader = new BufferedReader(new InputStreamReader(stream));
 
-                StringBuffer buffer = new StringBuffer();
-                String line = "";
+                        StringBuffer buffer = new StringBuffer();
+                        String line = "";
 
-                while ((line = reader.readLine()) != null) {
-                    buffer.append(line);
-                }
+                        while ((line = reader.readLine()) != null) {
+                            buffer.append(line);
+                        }
 
-                String finalJson = buffer.toString();
+                        String finalJson = buffer.toString();
+                        JSONObject parentObject = new JSONObject(finalJson);
 
-                JSONObject parentObject = new JSONObject(finalJson);
+                        if (!parentObject.has("error")){
+                            Log.d("Messageeesss","6");
+                            String make = parentObject.getString("make");
+                            String model = parentObject.getString("model");
+                            String colour = parentObject.getString("colour");
+                            String year = parentObject.getString("yearOfManufacture");
 
-                if (!parentObject.has("error")){
-                    Log.d("Messageeesss","6");
-                    String make = parentObject.getString("make");
-                    String model = parentObject.getString("model");
-                    String colour = parentObject.getString("colour");
-                    String year = parentObject.getString("yearOfManufacture");
+                            vehicle.setPlateNumber(plate_number);
+                            vehicle.setBrand(make);
+                            vehicle.setModel(model);
+                            vehicle.setYearManufactured(year);
+                            vehicle.setColor(colour);
+                        }else {
+                            Log.d("Messageeesss","plate not found");
+                            vehicle.setPlateNumber(plate_number);
+                            vehicle.setBrand("Unknown");
+                            vehicle.setModel("Unknown");
+                            vehicle.setYearManufactured("Unknown");
+                            vehicle.setColor("Unknown");
+                        }
 
-                    vehicle.setPlateNumber(plate_number);
-                    vehicle.setBrand(make);
-                    vehicle.setModel(model);
-                    vehicle.setYearManufactured(year);
-                    vehicle.setColor(colour);
-
-                }else {
-                    Log.d("Messageeesss","7");
+                    }else{
+                        Log.d("Messageeesss","No internet");
+                        vehicle.setPlateNumber(plate_number);
+                        vehicle.setBrand("Unknown");
+                        vehicle.setModel("Unknown");
+                        vehicle.setYearManufactured("Unknown");
+                        vehicle.setColor("Unknown");
+                    }
+                }else{
+                    Log.d("Messageeesss","No network connnection");
                     vehicle.setPlateNumber(plate_number);
                     vehicle.setBrand("Unknown");
                     vehicle.setModel("Unknown");
                     vehicle.setYearManufactured("Unknown");
                     vehicle.setColor("Unknown");
-
                 }
-
                 Log.d("Messageeesss","8");
-
 
                 DBOpenHelper db = new DBOpenHelper(getActivity().getApplicationContext());
                 Date tIn = new Date();
@@ -531,26 +563,18 @@ public class HomeFragment extends Fragment {
 
             try {
                 Log.d("Hey","lo");
-                //DBOpenHelper db = new DBOpenHelper(getActivity().getApplicationContext());
-                //Date tIn = new Date();
-                //long vehicle_id = db.createVehicle(result);
-                //Location aLocation = db.createDefaultLocation(); // Creates a default locaton with value.
-                //Parking park = new Parking(vehicle_id,aLocation.getLocation_id(),dateToString(tIn,"yyyy-MM-dd HH:mm:ss"));
-                //long parkingId = db.createParking(park);
-                //Parking p = db.getParkingById(parkingId);
-                //db.closeDB();
 
             } catch(Exception e) {
 
                 //dialog.dismiss();
-                Toast.makeText(getActivity().getApplicationContext(), "(A).", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getApplicationContext(), "Processing.", Toast.LENGTH_SHORT).show();
             }
 
             //dialog.dismiss();
             if(result != null) {
                 Log.d("Hey","yo");
             } else {
-                Toast.makeText(getActivity().getApplicationContext(), "(B)", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getApplicationContext(), "Working...", Toast.LENGTH_SHORT).show();
             }
 
         }
