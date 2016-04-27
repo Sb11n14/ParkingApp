@@ -491,7 +491,20 @@ public class DBOpenHelper extends SQLiteOpenHelper{
     public boolean isUserExist (String username){
 
         String count = "SELECT * FROM " + TABLE_USER +
-                        " WHERE " + USERNAME + " = \"" + username + "\"";
+                " WHERE " + USERNAME + " = \"" + username + "\"";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(count, null);
+        int vCount = c.getCount();
+        c.close();
+        if (vCount > 0)
+            return  true;
+        else
+            return false;
+    }
+    public boolean existUserWithPlateNumber (String platenumber){
+
+        String count = "SELECT * FROM " + TABLE_USER +
+                " WHERE " + PLATE_NUMBER + " = \"" + platenumber + "\"";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(count, null);
         int vCount = c.getCount();
@@ -563,6 +576,30 @@ public class DBOpenHelper extends SQLiteOpenHelper{
     }
 
     //Getting a User
+    public User getUserByPlateNumber(String platenumber){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM " + TABLE_USER +
+                            " WHERE " + PLATE_NUMBER + " = \"" + platenumber + "\"";
+        Log.e(LOG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if(c != null)
+            c.moveToFirst();
+
+        User user = new User();
+        user.setUserId(c.getInt((c.getColumnIndex(KEY_ID))));
+        user.setFirst_name(c.getString(c.getColumnIndex(FIRST_NAME)));
+        user.setLast_name(c.getString(c.getColumnIndex(LAST_NAME)));
+        user.setBalance(c.getDouble(c.getColumnIndex(BALANCE)));
+        user.setUsername(c.getString(c.getColumnIndex(USERNAME)));
+        user.setPlate_number(c.getString(c.getColumnIndex(PLATE_NUMBER)));
+        //c.close();
+        return user;
+    }
+
+
+    //Getting a User
     public User getUserById(long userId){
         SQLiteDatabase db = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM " + TABLE_USER +
@@ -618,16 +655,16 @@ public class DBOpenHelper extends SQLiteOpenHelper{
     /*
  * Updating a User
  */
-    public int updateUserFirstAndLastName(User user) {
+    public int updateUserBalance(User user) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
 
-        values.put(FIRST_NAME, user.getFirst_name());
-        values.put(LAST_NAME, user.getLast_name());
+        values.put(BALANCE, user.getBalance());
+        //values.put(LAST_NAME, user.getLast_name());
 
         // updating row
-        return db.update(TABLE_PARKING, values, KEY_ID + " = ?",
+        return db.update(TABLE_USER, values, KEY_ID + " = ?",
                 new String[] { String.valueOf(user.getUserId())});
     }
     public int updateUserName(User user) {
@@ -638,7 +675,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
         values.put(USERNAME, user.getUsername());
 
         // updating row
-        return db.update(TABLE_PARKING, values, KEY_ID + " = ?",
+        return db.update(TABLE_USER, values, KEY_ID + " = ?",
                 new String[] { String.valueOf(user.getUserId())});
     }
 

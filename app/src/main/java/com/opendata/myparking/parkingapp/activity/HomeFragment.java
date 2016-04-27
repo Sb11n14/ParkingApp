@@ -29,6 +29,7 @@ import com.opendata.myparking.parkingapp.R;
 import com.opendata.myparking.parkingapp.database.DBOpenHelper;
 import com.opendata.myparking.parkingapp.model.Location;
 import com.opendata.myparking.parkingapp.model.Parking;
+import com.opendata.myparking.parkingapp.model.User;
 import com.opendata.myparking.parkingapp.model.Vehicle;
 import com.squareup.picasso.Picasso;
 
@@ -197,6 +198,7 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 //v.findViewWithTag(imageView);
                 imageView.setImageResource(android.R.color.transparent);
+                //imageView.setImageDrawable(null);
                 resultTextView.setText("Welcome. \r\n Press the red button to scan plate number.");
             }
         });
@@ -271,7 +273,7 @@ public class HomeFragment extends Fragment {
                                             + " Processing time: " + String.format("%.2f", ((results.getProcessing_time_ms() / 1000.0) % 60)) + " seconds");
                                     * */
 
-                                    String plate_number = results.getResults().get(0).getPlate(); //  "ABCx1234";
+                                    String plate_number = results.getResults().get(0).getPlate(); //"ABCx1234";
                                     if (db.isVehicleExist(plate_number)){
                                         //yes .. exist.
                                         Log.d("Messageeesss","1");
@@ -284,12 +286,25 @@ public class HomeFragment extends Fragment {
                                             Date tOut = new Date();
                                             Date tIn = stringToDate(aParking.getTime_in());
                                             long duration = tOut.getTime() - tIn.getTime();
-                                            long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(duration);
+                                            long diffInMinutes = TimeUnit.MILLISECONDS.toSeconds(duration);
                                             aParking.setTime_out(dateToString(tOut,"yyyy-MM-dd HH:mm:ss"));
                                             Log.d("Messageeesss","2:::" + tOut);
-                                            aParking.setCharge(diffInMinutes * aLocation.getCost()); // set charge.
+                                            Double cst = diffInMinutes * aLocation.getCost();
+                                            aParking.setCharge(cst); // set charge.
                                             aParking.setActive(0); // 0 is inactive
                                             db.updateParking(aParking);
+
+                                            if (db.countUser() > 0 && db.existUserWithPlateNumber(plate_number)){
+                                                //take out money from user balance if there is a user.
+                                                User aUser = db.getUserByPlateNumber(plate_number);
+                                                if (aUser != null){
+                                                    Double currBal = aUser.getBalance();
+                                                    aUser.setBalance(currBal-cst);
+                                                }
+                                                db.updateUserBalance(aUser);
+
+                                            }
+
 
                                         }else{
                                             //no.. vehicle is not parked.
@@ -476,6 +491,8 @@ public class HomeFragment extends Fragment {
                 }
 
                 Log.d("Messageeesss","8");
+
+
                 DBOpenHelper db = new DBOpenHelper(getActivity().getApplicationContext());
                 Date tIn = new Date();
                 long vehicle_id = db.createVehicle(vehicle);
@@ -514,17 +531,26 @@ public class HomeFragment extends Fragment {
 
             try {
                 Log.d("Hey","lo");
+                //DBOpenHelper db = new DBOpenHelper(getActivity().getApplicationContext());
+                //Date tIn = new Date();
+                //long vehicle_id = db.createVehicle(result);
+                //Location aLocation = db.createDefaultLocation(); // Creates a default locaton with value.
+                //Parking park = new Parking(vehicle_id,aLocation.getLocation_id(),dateToString(tIn,"yyyy-MM-dd HH:mm:ss"));
+                //long parkingId = db.createParking(park);
+                //Parking p = db.getParkingById(parkingId);
+                //db.closeDB();
+
             } catch(Exception e) {
 
                 //dialog.dismiss();
-                Toast.makeText(getActivity().getApplicationContext(), "The plate number is not recognised (A).", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getApplicationContext(), "(A).", Toast.LENGTH_SHORT).show();
             }
 
             //dialog.dismiss();
             if(result != null) {
                 Log.d("Hey","yo");
             } else {
-                Toast.makeText(getActivity().getApplicationContext(), "A similar matching plate was found. Please try again.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getApplicationContext(), "(B)", Toast.LENGTH_SHORT).show();
             }
 
         }

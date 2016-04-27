@@ -19,6 +19,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText inputUsername;
     private EditText inputPassword;
     private EditText inputConfirmPassword;
+    private EditText inputPlate;
     private Button btnSubmit;
     //private DBOpenHelper db;
 
@@ -30,6 +31,7 @@ public class RegisterActivity extends AppCompatActivity {
         inputUsername = (EditText) findViewById(R.id.editTextUserName);
         inputPassword = (EditText) findViewById(R.id.editTextPassword);
         inputConfirmPassword = (EditText) findViewById(R.id.editTextConfirmPassword);
+        inputPlate = (EditText) findViewById(R.id.editTextPlate);
         btnSubmit = (Button) findViewById(R.id.buttonCreateAccount);
 
 
@@ -41,6 +43,7 @@ public class RegisterActivity extends AppCompatActivity {
                     String password2 = inputConfirmPassword.getText().toString().toLowerCase();
 
                     String uName = inputUsername.getText().toString().toLowerCase();
+                    String plateNum = inputPlate.getText().toString().toLowerCase() == "" ? "ABCx123": inputPlate.getText().toString().toLowerCase();
                     Log.d("Password:: ", "Pw1= " + password1 + " Pw2= " + password2 + " uName=" + uName);
 
                     ArrayList<User> userList = db.getAllUser();
@@ -50,7 +53,7 @@ public class RegisterActivity extends AppCompatActivity {
                     }else{
                         if (!db.isUserExist(uName)){
                             if (password1.equals(password2)){
-                                User usr = new User("John", "Smith",25.0,"ABCx1234",uName,password1);
+                                User usr = new User("John", "Smith",25.0,plateNum,uName,password1);
                                 long userId = db.createUser(usr);
                                 onBackPressed();
 
